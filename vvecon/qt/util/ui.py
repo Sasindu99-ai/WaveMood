@@ -61,5 +61,20 @@ class UI:
     def size(self, width: int, height: int) -> QSize:
         return QSize(self.dp(width), self.dp(height))
 
+    @classmethod
+    def clear_layout(cls, layout):
+        if layout is not None:
+            while layout.count():
+                item = layout.takeAt(0)  # remove the item from the layout
+                widget = item.widget()
+                if widget is not None:
+                    widget.setParent(None)  # remove widget from GUI
+                    widget.deleteLater()  # optional: mark for deletion
+                else:
+                    # If the item is a nested layout
+                    sublayout = item.layout()
+                    if sublayout is not None:
+                        cls.clear_layout(sublayout)  # recursive clear
+
 
 ui = UI()

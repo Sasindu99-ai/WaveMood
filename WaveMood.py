@@ -23,7 +23,7 @@ class WaveMood(Window):
             AppTheme.images.logo, 32, 32, Qt.AspectRatioMode.KeepAspectRatioByExpanding,
             Qt.TransformationMode.SmoothTransformation
         )))
-        self.setMinimumSize(ui.size(800, 600))
+        # self.setMinimumSize(ui.size(800, 600))
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         pal = self.palette()
         pal.setColor(QPalette.ColorRole.Window, AppTheme.colors.background)

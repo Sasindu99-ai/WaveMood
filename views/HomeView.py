@@ -10,7 +10,7 @@ import numpy as np
 import sounddevice as sd
 import soundfile as sf
 from PyQt6.QtCore import QTimer, Qt, pyqtSignal, pyqtSlot, QRectF
-from PyQt6.QtWidgets import QHBoxLayout, QFrame, QSizePolicy, QFileDialog, QVBoxLayout, QSpacerItem, QWidget
+from PyQt6.QtWidgets import QHBoxLayout, QFrame, QSizePolicy, QFileDialog, QVBoxLayout, QSpacerItem, QWidget, QProgressBar
 from PyQt6.QtGui import QFont, QPainter, QPen, QBrush, QColor, QLinearGradient
 
 import pyqtgraph as pg
@@ -267,6 +267,19 @@ class HomeView(View):
     _frameRate = 44100
     modelButtons: List[Button] = []
 
+    # Predefined emotion list with emoji, pretty names, and color for progress bar
+    _emotion_list = [
+        {'key': 'calm',     'emoji': '😌', 'label': 'Calm',     'color': '#4FC3F7'},
+        {'key': 'excited',  'emoji': '🤩', 'label': 'Excited',  'color': '#FFD600'},
+        {'key': 'neutral',  'emoji': '😐', 'label': 'Neutral',  'color': '#B0BEC5'},
+        {'key': 'happy',    'emoji': '😊', 'label': 'Happy',    'color': '#81C784'},
+        {'key': 'sad',      'emoji': '😢', 'label': 'Sad',      'color': '#90A4AE'},
+        {'key': 'angry',    'emoji': '😠', 'label': 'Angry',    'color': '#E57373'},
+        {'key': 'fear',     'emoji': '😱', 'label': 'Fear',     'color': '#9575CD'},
+        {'key': 'surprise', 'emoji': '😮', 'label': 'Surprise', 'color': '#FFB74D'},
+        # ...add more if needed...
+    ]
+
     def __init__(self, parent: Optional[WindowType] = None):
         super(HomeView, self).__init__(parent, 'Home')
         self.setObjectName('HomeView')
@@ -313,10 +326,10 @@ class HomeView(View):
 
         # map models to buttons so we can treat them like radio buttons
         self._modelButtonMap = {}
+        self.modelButtons.clear()  # Ensure no duplicates
         # default active model
-        self._activeModel = Model.MLP
+        self._activeModel = Model.MLP if _tensorflow_available else Model.KNN
         for model in Model:
-            # create checkable button
             btn = Button(
                 model.value,
                 icon=ui.icon(AppTheme.images.getImage(model.value.lower())),
@@ -350,10 +363,8 @@ class HomeView(View):
             if model == Model.MLP and not _tensorflow_available:
                 btn.setEnabled(False)
                 btn.setToolTip("MLP model unavailable: TensorFlow not loaded")
-                if is_active:
-                    self._activeModel = Model.KNN  # fallback to KNN
 
-            # connect click to model selector (ignore passed checked arg)
+            # Use a lambda with default argument to avoid late binding issue
             btn.onClick(lambda checked, m=model: self._onModelSelected(m))
 
             self.modelButtons.append(btn)
@@ -671,12 +682,47 @@ class HomeView(View):
         self.separator2.setLineWidth(1)
         self.separator2.setMidLineWidth(0)
 
-        # Analysis results section (placeholder)
+        # --- Analysis results section ---
+        self.resultsFrame = QFrame(self)
+        self.resultsFrame.setStyleSheet("""
+            QFrame {
+                background: #23272F;
+                border-radius: 14px;
+                border: 1px solid #353A42;
+            }
+            
+            QFrame QLabel {
+                background: transparent;
+                border: none;
+            }
+        """)
+        self.resultsFrame.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.resultsFrame.setMinimumHeight(ui.dp(80))
+        self.resultsLayout = QVBoxLayout(self.resultsFrame)
+        self.resultsLayout.setContentsMargins(ui.dp(16), ui.dp(12), ui.dp(16), ui.dp(12))
+        self.resultsLayout.setSpacing(ui.dp(8))
 
+        self.resultsTitle = Label('Emotion Analysis', parent=self.resultsFrame)
+        self.resultsTitle.setStyleSheet(label.update(
+            backgroundColor='transparent', color='#FFFFFF', fontSize=15, fontWeight='600'
+        ).qss)
+        self.resultsLayout.addWidget(self.resultsTitle)
+
+        # Container for emotion rows
+        self.emotionRowsWidget = VBoxWidget(self.resultsFrame, spacing=ui.dp(6))
+        self.resultsLayout.addWidget(self.emotionRowsWidget)
+        self.resultsFrame.setParent(self)  # ensure parent is main widget
+
+        # Store widgets for updating
+        self._emotion_widgets = {}
+        self._init_emotion_rows()
+
+        # --- Layout order ---
         self.layout.addWidget(self.config)
         self.layout.addWidget(self.separator1)
         self.layout.addWidget(self.body, stretch=1)
         self.layout.addWidget(self.separator2)
+        self.layout.addWidget(self.resultsFrame, stretch=1)
         self.setLayout(self.layout)
 
         # Recording state
@@ -1418,6 +1464,138 @@ class HomeView(View):
             result['error'] = str(e)
             return result
 
+    def _init_emotion_rows(self):
+        """Initialize emotion rows with zero values before analysis."""
+        ui.clear_layout(self.emotionRowsWidget._layout)
+        self._emotion_widgets.clear()
+        for idx, info in enumerate(self._emotion_list):
+            row = QHBoxLayout()
+            row.setSpacing(ui.dp(10))
+            row.setContentsMargins(ui.dp(6), ui.dp(2), ui.dp(6), ui.dp(2))
+
+            emoji_label = Label(text=info['emoji'], parent=self.emotionRowsWidget)
+            emoji_label.setFixedWidth(ui.dp(50))
+            emoji_label.setFixedHeight(ui.dp(36))
+            emoji_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            left_margin = ui.dp(8) if idx == 0 else ui.dp(0)
+            emoji_label.setStyleSheet(f"""
+                QLabel {{
+                    background: transparent;
+                    color: #FFF;
+                    font-size: 24px;
+                    font-weight: 700;
+                    border: none;
+                    margin-left: {left_margin}px;
+                    vertical-align: middle;
+                }}
+            """)
+
+            text_label = Label(text=info['label'], parent=self.emotionRowsWidget)
+            text_label.setFixedWidth(ui.dp(80))
+            text_label.setStyleSheet("""
+                QLabel {
+                    background: transparent;
+                    color: #E95525;
+                    font-size: 15px;
+                    fontWeight='600',
+                    border: none;
+                    text-align: left;
+                }
+            """)
+
+            duration_label = Label(text='🕒 0.00s', parent=self.emotionRowsWidget)
+            duration_label.setFixedWidth(ui.dp(80))
+            duration_label.setStyleSheet("""
+                QLabel {
+                    background: #23272F;
+                    color: #CCCCCC;
+                    font-size: 13px;
+                    border-radius: 6px;
+                    padding: 2px 8px;
+                    border: 1px solid #353A42;
+                }
+            """)
+
+            # Prettified progress bar, no text, emotion color
+            prob_bar = QProgressBar(parent=self.emotionRowsWidget)
+            prob_bar.setMinimum(0)
+            prob_bar.setMaximum(100)
+            prob_bar.setValue(0)
+            prob_bar.setTextVisible(False)
+            prob_bar.setFixedWidth(ui.dp(120))
+            prob_bar.setStyleSheet(f"""
+                QProgressBar {{
+                    background-color: #353A42;
+                    border-radius: 8px;
+                    border: 1px solid #454A52;
+                    height: 18px;
+                }}
+                QProgressBar::chunk {{
+                    background-color: {info['color']};
+                    border-radius: 8px;
+                }}
+            """)
+
+            percent_label = Label(text='0.0%', parent=self.emotionRowsWidget)
+            percent_label.setFixedWidth(ui.dp(80))
+            percent_label.setStyleSheet("""
+                QLabel {
+                    background: #23272F;
+                    color: #CCCCCC;
+                    font-size: 13px;
+                    border-radius: 6px;
+                    padding: 2px 8px;
+                }
+            """)
+
+            row.addWidget(emoji_label)
+            row.addWidget(text_label)
+            row.addSpacing(ui.dp(4))
+            row.addWidget(duration_label)
+            row.addWidget(prob_bar)
+            row.addWidget(percent_label)
+            row.addStretch(1)
+
+            container = QWidget(self.emotionRowsWidget)
+            container.setLayout(row)
+            container.setStyleSheet("""
+                QWidget {
+                    background: #23272F;
+                    border-radius: 10px;
+                    margin-bottom: 2px;
+                }
+            """)
+            self.emotionRowsWidget.addWidget(container)
+            self._emotion_widgets[info['key']] = {
+                'duration': duration_label,
+                'percent': percent_label,
+                'prob': prob_bar
+            }
+
+    def _update_emotion_rows(self, summary):
+        """Update emotion rows after analysis."""
+        for info in self._emotion_list:
+            key = info['key']
+            w = self._emotion_widgets.get(key)
+            if not w:
+                continue
+            data = summary.get(key, {})
+            duration = data.get('duration_s', 0.0)
+            percent = data.get('pct', 0.0)
+            prob = data.get('avg_prob', 0.0)
+            # Format duration prettily
+            if duration >= 60:
+                mins = int(duration // 60)
+                secs = duration % 60
+                duration_str = f"🕒 {mins}m {secs:.2f}s"
+            else:
+                duration_str = f"🕒 {duration:.2f}s"
+            w['duration'].setText(duration_str)
+            w['percent'].setText(f"{percent:.2f}%")
+            # Progress bar value is pct, clamped to 100
+            pct_val = max(0, min(100, float(percent) if percent is not None else 0.0))
+            w['prob'].setValue(int(pct_val))
+
     def _onAnalysisComplete(self, res, file_path):
         """Callback on main thread after analysis completes."""
         try:
@@ -1425,6 +1603,7 @@ class HomeView(View):
                 err = res.get('error') if isinstance(res, dict) else str(res)
                 self.playbackStatus.setText(f"Analysis failed: {err}")
                 logger.error(f"Audio analysis failed: {err}")
+                self._init_emotion_rows()
                 return
             summary = res.get('summary', {})
             # pick top emotion by duration
@@ -1440,9 +1619,12 @@ class HomeView(View):
             else:
                 self.playbackStatus.setText("No emotions detected")
                 logger.info(f"Analysis produced empty summary for {file_path}")
+            # Update emotion rows in UI
+            self._update_emotion_rows(summary)
         except Exception as e:
             logger.error(f"Error in _onAnalysisComplete: {e}")
             self.playbackStatus.setText("Analysis error")
+            self._init_emotion_rows()
 
     # replace placeholder _analyzeAudio with real implementation
     def _analyzeAudio(self):
@@ -1450,17 +1632,20 @@ class HomeView(View):
         file_path = self.selectedFileLabel.text()
         if not file_path or file_path == 'No file selected' or not os.path.exists(file_path):
             self.playbackStatus.setText('Please select or record an audio file first')
+            self._init_emotion_rows()
             return
         # ask which model is active
         if getattr(self, '_activeModel', None) == Model.MLP:
             if not _tensorflow_available:
                 self.playbackStatus.setText('MLP model unavailable: TensorFlow not loaded')
                 logger.error("MLP model unavailable: TensorFlow DLL load failed")
+                self._init_emotion_rows()
                 return
             model_choice = 'mlp'
         else:
             model_choice = 'knn'
         self.playbackStatus.setText('Analyzing audio...')
+        self._init_emotion_rows()
         # run analysis in background and call back on completion
         threadPool.start(
             self._run_analysis, file_path, model_choice, callback=lambda res: self._onAnalysisComplete(res, file_path)
@@ -1508,14 +1693,15 @@ class HomeView(View):
     def _onModelSelected(self, model: Model):
         """Mark selected model button as active (radio behavior) and store active model."""
         try:
-            logger.debug(f"Model selected: {model.name}")
+            # Only allow selection if enabled
+            btn = self._modelButtonMap.get(model)
+            if btn and not btn.isEnabled():
+                return
             self._activeModel = model
-            for m, btn in self._modelButtonMap.items():
-                logger.debug(f"Updating button for model: {m.name}")
+            for m, b in self._modelButtonMap.items():
                 if m == model:
-                    logger.debug(f"Marking button as active for model: {m.name}")
-                    btn.setChecked(True)
-                    btn.setStyleSheet(primaryButton.update(
+                    b.setChecked(True)
+                    b.setStyleSheet(primaryButton.update(
                         backgroundColor='#E95525',
                         color='#FFFFFF',
                         fontWeight='600',
@@ -1523,9 +1709,8 @@ class HomeView(View):
                         hoverColor='#C15532',
                     ).qss)
                 else:
-                    logger.debug(f"Marking button as inactive for model: {m.name}")
-                    btn.setChecked(False)
-                    btn.setStyleSheet(secondaryButton.update(
+                    b.setChecked(False)
+                    b.setStyleSheet(secondaryButton.update(
                         backgroundColor='#353A42',
                         color='#CCCCCC',
                         border='1px solid #454A52',
