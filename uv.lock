@@ -2203,18 +2203,6 @@ wheels = [
 ]
 
 [[package]]
-name = "tf-keras"
-version = "2.20.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "tensorflow" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/42/38/6060f6c7472439bb3890b9094d69d31d9f8d5da123b16c738773e70fff91/tf_keras-2.20.1.tar.gz", hash = "sha256:884be5938fb0b2b53b1583c1ae2b660ef87215377c29b5b6a77fd221b472aeaf", size = 1254487 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/85/6b/d9a8202bfe5c9e3b078cf550bafab962aa9d6b1a1f1180f0065399d4c9b2/tf_keras-2.20.1-py3-none-any.whl", hash = "sha256:3f0e0a34d9a4c8758f24fdc1053e6e335f16ab5534c7d34f1899b8924779760c", size = 1694335 },
-]
-
-[[package]]
 name = "threadpoolctl"
 version = "3.6.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2320,7 +2308,6 @@ dependencies = [
     { name = "dotenv" },
     { name = "gradio" },
     { name = "icecream" },
-    { name = "keras" },
     { name = "librosa" },
     { name = "matplotlib" },
     { name = "pandas" },
@@ -2333,7 +2320,6 @@ dependencies = [
     { name = "sounddevice" },
     { name = "sqlalchemy" },
     { name = "tensorflow" },
-    { name = "tf-keras" },
 ]
 
 [package.metadata]
@@ -2342,7 +2328,6 @@ requires-dist = [
     { name = "dotenv", specifier = ">=0.9.9" },
     { name = "gradio", specifier = ">=5.46.0" },
     { name = "icecream", specifier = ">=2.1.7" },
-    { name = "keras", specifier = ">=3.11.3" },
     { name = "librosa", specifier = ">=0.11.0" },
     { name = "matplotlib", specifier = ">=3.10.6" },
     { name = "pandas", specifier = ">=2.3.2" },
@@ -2355,7 +2340,6 @@ requires-dist = [
     { name = "sounddevice", specifier = ">=0.5.2" },
     { name = "sqlalchemy", specifier = ">=2.0.43" },
     { name = "tensorflow", specifier = ">=2.20.0" },
-    { name = "tf-keras", specifier = ">=2.20.1" },
 ]
 
 [[package]]

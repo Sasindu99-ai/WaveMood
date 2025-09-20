@@ -5,6 +5,7 @@ import wave
 from time import time
 from typing import List, Optional
 
+import joblib
 import numpy as np
 import sounddevice as sd
 import soundfile as sf
@@ -29,6 +30,14 @@ from vvecon.qt.logger import logger
 from vvecon.qt.res import Icons
 from vvecon.qt.thread import threadPool
 from vvecon.qt.util import ui
+
+try:
+    from tensorflow.saved_model import load as load_model
+    _tensorflow_available = True
+except Exception as e:
+    logger.error(f"Error importing TensorFlow/Keras: {str(e)}")
+    load_model = None
+    _tensorflow_available = False
 
 __all__ = ['HomeView']
 
@@ -337,8 +346,14 @@ class HomeView(View):
                     hoverColor='#3A3F47',
                 ).qss)
 
+            # Disable MLP button if TensorFlow is not available
+            if model == Model.MLP and not _tensorflow_available:
+                btn.setEnabled(False)
+                btn.setToolTip("MLP model unavailable: TensorFlow not loaded")
+                if is_active:
+                    self._activeModel = Model.KNN  # fallback to KNN
+
             # connect click to model selector (ignore passed checked arg)
-            # callback receives checked boolean from button; accept it but forward the captured model
             btn.onClick(lambda checked, m=model: self._onModelSelected(m))
 
             self.modelButtons.append(btn)
@@ -1189,14 +1204,267 @@ class HomeView(View):
                 pass
         self._playbackThread = None
 
-    def _analyzeAudio(self):
-        """Analyze the selected audio file (placeholder for future implementation)"""
-        if not self.selectedFileLabel.text() or self.selectedFileLabel.text() == 'No file selected':
-            self.playbackStatus.setText('Please select an audio file first')
-            return
+    # --- Analysis / model helpers (new) ---
+    def _ensure_models_loaded(self):
+        """Lazy-load models/scalers/encoders in background thread. Returns (ok, err_msg)."""
+        if getattr(self, '_models_initialized', False):
+            return True, ''
+        try:
+            base = os.getcwd()  # expect model files in project root or adjust as needed
+            # load mlp model if available and keras is importable
+            if load_model and _tensorflow_available and not hasattr(self, '_mlp_model'):
+                mlp_path = os.path.join(base, 'emotiondetector_mlp_model.h5')
+                if os.path.exists(mlp_path):
+                    self._mlp_model = load_model(mlp_path)
+            # scalers / encoders
+            scaler_path = os.path.join(base, 'emotion_scaler.pkl')
+            le_path = os.path.join(base, 'emotion_labelencoder.pkl')
+            knn_path = os.path.join(base, 'knn_emotion_model.pkl')
+            if os.path.exists(scaler_path) and not hasattr(self, '_scaler_mlp'):
+                self._scaler_mlp = joblib.load(scaler_path)
+            if os.path.exists(le_path) and not hasattr(self, '_le_encoder'):
+                self._le_encoder = joblib.load(le_path)
+            if os.path.exists(knn_path) and not hasattr(self, '_knn_model'):
+                self._knn_model = joblib.load(knn_path)
+            self._models_initialized = True
+            return True, ''
+        except Exception as e:
+            return False, str(e)
 
+    def _estimate_f0_autocorr(self, frame, sr, fmin=50, fmax=800):
+        """Estimate f0 for a short frame using autocorrelation. Returns f0 in Hz or 0.0."""
+        try:
+            # window and zero-mean
+            x = frame - np.mean(frame)
+            if x.size < 3:
+                return 0.0
+            corr = np.correlate(x, x, mode='full')
+            corr = corr[corr.size // 2:]
+            # ignore zero-lag
+            corr[0] = 0.0
+            # define lag range
+            min_lag = int(sr / fmax) if fmax > 0 else 1
+            max_lag = int(sr / fmin) if fmin > 0 else len(corr) - 1
+            max_lag = min(max_lag, len(corr) - 1)
+            if max_lag <= min_lag:
+                return 0.0
+            peak_region = corr[min_lag:max_lag + 1]
+            if peak_region.size == 0:
+                return 0.0
+            peak = np.argmax(peak_region) + min_lag
+            if corr[peak] <= 0:
+                return 0.0
+            f0 = float(sr) / float(peak) if peak > 0 else 0.0
+            return float(f0)
+        except Exception:
+            return 0.0
+
+    def _extract_window_features(self, sig, sr):
+        """
+        Given a 1-D signal for one window, split into small frames and compute arrays:
+        f0_contour, energy_contour — these mirror the original ML_feed expectations.
+        """
+        try:
+            frame_len = int(sr * 0.06)  # 60ms
+            hop = int(frame_len // 2)
+            if frame_len < 16:
+                frame_len = 256
+                hop = 128
+            frames = []
+            for start in range(0, max(1, len(sig) - frame_len + 1), hop):
+                frames.append(sig[start:start + frame_len])
+            if not frames:
+                frames = [sig]
+            f0s = []
+            energies = []
+            for fr in frames:
+                # energy (RMS)
+                frf = np.asarray(fr, dtype=np.float32)
+                if frf.size == 0:
+                    energies.append(0.0)
+                    f0s.append(0.0)
+                    continue
+                rms = float(np.sqrt(np.mean(frf * frf)))
+                energies.append(rms)
+                # estimate f0 via autocorr
+                f0 = self._estimate_f0_autocorr(frf, sr)
+                f0s.append(f0)
+            return np.array(f0s, dtype=np.float32), np.array(energies, dtype=np.float32)
+        except Exception:
+            return np.array([], dtype=np.float32), np.array([], dtype=np.float32)
+
+    def _run_analysis(self, file_path, model_choice: str = 'mlp'):
+        """
+        Worker function: segment file into overlapping windows, extract features per window,
+        predict per-window emotion and probabilities, aggregate results.
+        Returns a dict result.
+        """
+        result = {'ok': False, 'error': '', 'timeline': [], 'summary': {}}
+        try:
+            ok, err = self._ensure_models_loaded()
+            if not ok:
+                result['error'] = f"Model load error: {err}"
+                return result
+
+            # read audio using soundfile
+            data, sr = sf.read(file_path, always_2d=True)
+            # mono
+            if data.ndim > 1 and data.shape[1] > 1:
+                sig = np.mean(data, axis=1)
+            else:
+                sig = data.flatten()
+            total_len = len(sig)
+            total_sec = total_len / float(sr) if sr else 0.0
+            # sliding windows
+            win_sec = 1.0
+            hop_sec = 0.5
+            win = int(win_sec * sr)
+            hop = int(hop_sec * sr)
+            if win <= 0:
+                win = total_len
+                hop = win
+            idx = 0
+            window_predictions = []
+            emotions = []
+            probs_list = []
+            windows_info = []
+            while idx < total_len:
+                wsig = sig[idx: idx + win]
+                if wsig.size == 0:
+                    break
+                f0s, energies = self._extract_window_features(wsig, sr)
+                # build ML_feed-like features
+                if f0s.size == 0 or energies.size == 0:
+                    features = np.zeros((1, 8), dtype=np.float32)
+                else:
+                    feed = [
+                        float(np.mean(f0s)), float(np.var(f0s)), float(np.max(f0s)), float(np.min(f0s)),
+                        float(np.mean(energies)), float(np.var(energies)), float(np.max(energies)), float(np.min(energies))
+                    ]
+                    features = np.array(feed, dtype=np.float32).reshape(1, -1)
+                # predict
+                pred_label = None
+                pred_probs = None
+                try:
+                    if model_choice == 'mlp' and hasattr(self, '_mlp_model'):
+                        if hasattr(self, '_scaler_mlp'):
+                            features_scaled = self._scaler_mlp.transform(features)
+                        else:
+                            features_scaled = features
+                        probs = self._mlp_model.predict(features_scaled, verbose=0)
+                        probs = probs[0] if probs.ndim > 1 else probs
+                        if hasattr(self, '_le_encoder'):
+                            labels = list(self._le_encoder.classes_)
+                        else:
+                            labels = [str(i) for i in range(probs.shape[0])]
+                        pred_idx = int(np.argmax(probs))
+                        pred_label = labels[pred_idx]
+                        pred_probs = dict(zip(labels, [float(x) for x in probs]))
+                    elif model_choice == 'knn' and hasattr(self, '_knn_model'):
+                        if hasattr(self._knn_model, 'predict_proba'):
+                            probs = self._knn_model.predict_proba(features)[0]
+                            labels = list(self._le_encoder.classes_) if hasattr(self, '_le_encoder') else [str(i) for i in range(len(probs))]
+                            pred_probs = dict(zip(labels, [float(x) for x in probs]))
+                            pred_label = labels[int(np.argmax(probs))]
+                        else:
+                            pred_raw = self._knn_model.predict(features)[0]
+                            if hasattr(self, '_le_encoder'):
+                                pred_label = self._le_encoder.inverse_transform([pred_raw])[0]
+                            else:
+                                pred_label = str(pred_raw)
+                            pred_probs = None
+                    else:
+                        # fallback: use energy-based heuristic
+                        avg_rms = float(np.mean(energies)) if energies.size else 0.0
+                        if avg_rms < 0.02:
+                            pred_label = 'neutral'
+                        elif avg_rms < 0.08:
+                            pred_label = 'calm'
+                        else:
+                            pred_label = 'excited'
+                        pred_probs = {pred_label: 1.0}
+                except Exception as e:
+                    pred_label = 'error'
+                    pred_probs = {'error': 1.0}
+                # record
+                t_start = idx / float(sr)
+                t_end = min(total_sec, (idx + win) / float(sr))
+                window_predictions.append(pred_label)
+                probs_list.append(pred_probs)
+                windows_info.append({'start': t_start, 'end': t_end, 'label': pred_label, 'probs': pred_probs})
+                idx += hop
+
+            # aggregate durations
+            duration_map = {}
+            prob_accum = {}
+            for w in windows_info:
+                lbl = w['label']
+                dur = max(0.0, w['end'] - w['start'])
+                duration_map[lbl] = duration_map.get(lbl, 0.0) + dur
+                if w.get('probs'):
+                    for k, v in (w['probs'] or {}).items():
+                        prob_accum.setdefault(k, []).append(float(v))
+            # compute percentages
+            summary = {}
+            for lbl, dur in duration_map.items():
+                pct = (dur / total_sec) * 100.0 if total_sec > 1e-6 else 0.0
+                avg_prob = float(np.mean(prob_accum.get(lbl, [1.0]))) if prob_accum.get(lbl) else None
+                summary[lbl] = {'duration_s': round(dur, 3), 'pct': round(pct, 2), 'avg_prob': (round(avg_prob, 4) if avg_prob is not None else None)}
+            result['ok'] = True
+            result['timeline'] = windows_info
+            result['summary'] = summary
+            return result
+        except Exception as e:
+            result['error'] = str(e)
+            return result
+
+    def _onAnalysisComplete(self, res, file_path):
+        """Callback on main thread after analysis completes."""
+        try:
+            if not isinstance(res, dict) or not res.get('ok'):
+                err = res.get('error') if isinstance(res, dict) else str(res)
+                self.playbackStatus.setText(f"Analysis failed: {err}")
+                logger.error(f"Audio analysis failed: {err}")
+                return
+            summary = res.get('summary', {})
+            # pick top emotion by duration
+            if summary:
+                top = max(summary.items(), key=lambda kv: kv[1]['duration_s'])
+                top_label, top_info = top
+                self.playbackStatus.setText(f"Top emotion: {top_label} ({top_info['pct']}%)")
+                logger.info(f"Analysis summary for {file_path}:")
+                for lbl, info in summary.items():
+                    logger.info(
+                        "  %s — %.2fs (%.2f%%) avg_prob=%s" % (lbl, info['duration_s'], info['pct'], info['avg_prob'])
+                    )
+            else:
+                self.playbackStatus.setText("No emotions detected")
+                logger.info(f"Analysis produced empty summary for {file_path}")
+        except Exception as e:
+            logger.error(f"Error in _onAnalysisComplete: {e}")
+            self.playbackStatus.setText("Analysis error")
+
+    # replace placeholder _analyzeAudio with real implementation
+    def _analyzeAudio(self):
+        """Start background analysis for the current audio file."""
+        file_path = self.selectedFileLabel.text()
+        if not file_path or file_path == 'No file selected' or not os.path.exists(file_path):
+            self.playbackStatus.setText('Please select or record an audio file first')
+            return
+        # ask which model is active
+        if getattr(self, '_activeModel', None) == Model.MLP:
+            if not _tensorflow_available:
+                self.playbackStatus.setText('MLP model unavailable: TensorFlow not loaded')
+                logger.error("MLP model unavailable: TensorFlow DLL load failed")
+                return
+            model_choice = 'mlp'
+        else:
+            model_choice = 'knn'
         self.playbackStatus.setText('Analyzing audio...')
-        # This is a placeholder - real implementation will come later
+        # run analysis in background and call back on completion
+        threadPool.start(
+            self._run_analysis, file_path, model_choice, callback=lambda res: self._onAnalysisComplete(res, file_path)
+        )
 
     def onCreate(self) -> None:
         self.parent.topBar.setMode(TopBarMode.EMPTY)
