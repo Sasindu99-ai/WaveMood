@@ -76,7 +76,8 @@ class Button(QToolButton):
 			super().setIcon(self._icon)
 			super().setIconSize(self._iconSize)
 		if self._text:
-			super().setText(f"{'\u00A0' * self._spaceBetween}{self._text}")
+			spaces = "\u00A0" * self._spaceBetween
+			super().setText(f'{spaces}{self._text}')
 
 		# Adjust size
 		self.adjustSize()

@@ -156,9 +156,9 @@ class Icon(Generic[IconType]):
 		return icon
 
 	def toStr(self):
-		return f'{_displayModes[self.mode]}{f' {_displayStyles[self.style]}' if self.style is not None else ""}' \
-			f'{f' {_displayPts[self.pt]}' if self.pt is not None else ""}' \
-			f'{f' {_displayWeights[self.weight]}' if self.weight is not None else ""}' \
+		return f'{_displayModes[self.mode]}{f" {_displayStyles[self.style]}" if self.style is not None else ""}' \
+			f'{f" {_displayPts[self.pt]}" if self.pt is not None else ""}' \
+			f'{f" {_displayWeights[self.weight]}" if self.weight is not None else ""}' \
 			f' {self.icon}'
 
 

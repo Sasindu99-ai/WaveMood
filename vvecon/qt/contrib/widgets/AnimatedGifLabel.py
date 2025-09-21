@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QLabel
-from PyQt6.QtGui import QMovie, QPixmap
+from PyQt6.QtGui import QMovie
 from PyQt6.QtCore import QSize, Qt
 
 
@@ -8,6 +8,7 @@ class AnimatedGifLabel(QLabel):
         super().__init__(parent)
         self.movie = QMovie(gif_path)
         self.setMovie(self.movie)
+        self.movie.setSpeed(300)
         self.setStyleSheet("background: transparent; border: none;")
         self.setMinimumSize(QSize(48, 48))  # Increase minimum size
         self._defaultSize = QSize(48, 48)
@@ -29,7 +30,7 @@ class AnimatedGifLabel(QLabel):
         if self.movie.currentPixmap().isNull():
             return
         pixmap = self.movie.currentPixmap().scaled(
-            self._lastSize,
+            QSize(int(self._lastSize.width()*1.168), int(self._lastSize.height()*1.168)),
             aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio,
             transformMode=Qt.TransformationMode.SmoothTransformation
         )

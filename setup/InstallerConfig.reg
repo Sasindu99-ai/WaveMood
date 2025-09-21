@@ -1,0 +1,9 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\VVECON\SC]
+"InstallPath"="C:\\Program Files\\WaveMood"
+"Version"="1.0.0"
+"Publisher"="Sasindu Wijethunga"
+
+[HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WaveMood]
+"WaveMood"="\"C:\\Program Files\\WaveMood\\WaveMood.exe\""
