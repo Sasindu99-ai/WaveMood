@@ -10,7 +10,7 @@ import numpy as np
 import sounddevice as sd
 import soundfile as sf
 from PyQt6.QtCore import QTimer, Qt, pyqtSignal, pyqtSlot, QRectF
-from PyQt6.QtWidgets import QHBoxLayout, QFrame, QSizePolicy, QFileDialog, QVBoxLayout, QSpacerItem, QWidget, QProgressBar
+from PyQt6.QtWidgets import QHBoxLayout, QFrame, QSizePolicy, QFileDialog, QVBoxLayout, QSpacerItem, QWidget, QProgressBar, QCheckBox
 from PyQt6.QtGui import QFont, QPainter, QPen, QBrush, QColor, QLinearGradient
 
 import pyqtgraph as pg
@@ -773,6 +773,48 @@ class HomeView(View):
         self._vuTimer = QTimer(self)
         self._vuTimer.setInterval(50)  # 20 FPS
         self._vuTimer.timeout.connect(self._updateVuMeter)
+
+        # --- Serial/Arduino Section ---
+        self.arduinoSerial = None
+        self._arduino_connected = False
+
+        # Add COM port input and auto-send checkbox to config section
+        self.comPortInput = InputField(
+            name='COM Port',
+            placeholder='COM Port (e.g. COM6)',
+            parent=self.config,
+            inType=InputType.TEXT,
+            icon=Icons.Rounded.usb
+        )
+        self.comPortInput.setValue("COM6")
+
+        self.autoSendCheck = QCheckBox("Send automatically to Arduino")
+        self.autoSendCheck.setChecked(True)
+        self.autoSendCheck.setStyleSheet("""
+            QCheckBox {
+                color: #CCCCCC;
+                font-size: 13px;
+                padding-left: 4px;
+            }
+        """)
+
+        self.config.addWidget(self.comPortInput)
+        self.config.addWidget(self.autoSendCheck)
+
+        # Add "Send to Arduino" button to results section
+        self.sendArduinoBtn = Button(
+            'Send to Arduino',
+            icon=Icons.Rounded.usb,
+            iconSize=ui.size(22, 22),
+            styleSheet=primaryButton.update(
+                backgroundColor='#E95525', color='white', fontWeight='600', radius=8
+            ).qss
+        )
+        self.sendArduinoBtn.onClick(self._onSendToArduino)
+        self.resultsLayout.addWidget(self.sendArduinoBtn)
+
+        # Track last predicted emotion for sending
+        self._last_predicted_emotion = None
 
     # --- File selection ---
     def _onSelectFile(self):
@@ -1596,6 +1638,61 @@ class HomeView(View):
             pct_val = max(0, min(100, float(percent) if percent is not None else 0.0))
             w['prob'].setValue(int(pct_val))
 
+    # --- Arduino Serial Logic ---
+    def _ensure_arduino_connected(self):
+        """Ensure serial connection to Arduino is established."""
+        port = self.comPortInput.text().strip()
+        if not port:
+            self.playbackStatus.setText("Please enter a COM port for Arduino.")
+            return False
+        if self.arduinoSerial and self._arduino_connected:
+            # Already connected, check port
+            if self.arduinoSerial.port != port:
+                try:
+                    self.arduinoSerial.close()
+                except Exception:
+                    pass
+                self._arduino_connected = False
+        if not self._arduino_connected:
+            try:
+                self.arduinoSerial = serial.Serial(port, 9600, timeout=1)
+                import time
+                time.sleep(2)  # Wait for Arduino to reset
+                self._arduino_connected = True
+                self.playbackStatus.setText(f"Connected to Arduino on {port}")
+            except Exception as e:
+                self._arduino_connected = False
+                self.playbackStatus.setText(f"Arduino connection failed: {e}")
+                return False
+        return True
+
+    def _send_emotion_to_arduino(self, emotion):
+        """Send emotion to Arduino via serial."""
+        if not self._ensure_arduino_connected():
+            return
+        negative_emotions = {"angry", "fearful", "sad", "disgust"}
+        positive_emotions = {"happy", "surprised", "calm", "excited"}
+        try:
+            if emotion and isinstance(emotion, str):
+                if emotion.lower() in negative_emotions:
+                    self.arduinoSerial.write(b"NEG\n")
+                    self.playbackStatus.setText("➡️ Sent NEG to Arduino (servo = 180°)")
+                elif emotion.lower() in positive_emotions:
+                    self.arduinoSerial.write(b"POS\n")
+                    self.playbackStatus.setText("➡️ Sent POS to Arduino (servo = 180°)")
+                else:
+                    self.playbackStatus.setText("⚠️ Emotion not mapped, nothing sent.")
+        except Exception as e:
+            self.playbackStatus.setText(f"Error sending to Arduino: {e}")
+
+    def _onSendToArduino(self):
+        """Manual send button handler."""
+        if not self._last_predicted_emotion:
+            QMessageBox.warning(self, "No Emotion", "No emotion predicted yet.")
+            return
+        self._send_emotion_to_arduino(self._last_predicted_emotion)
+
+    # --- Analysis result hook ---
     def _onAnalysisComplete(self, res, file_path):
         """Callback on main thread after analysis completes."""
         try:
@@ -1611,6 +1708,10 @@ class HomeView(View):
                 top = max(summary.items(), key=lambda kv: kv[1]['duration_s'])
                 top_label, top_info = top
                 self.playbackStatus.setText(f"Top emotion: {top_label} ({top_info['pct']}%)")
+                self._last_predicted_emotion = top_label
+                # Auto-send to Arduino if checked
+                if self.autoSendCheck.isChecked():
+                    self._send_emotion_to_arduino(top_label)
                 logger.info(f"Analysis summary for {file_path}:")
                 for lbl, info in summary.items():
                     logger.info(
@@ -1618,6 +1719,7 @@ class HomeView(View):
                     )
             else:
                 self.playbackStatus.setText("No emotions detected")
+                self._last_predicted_emotion = None
                 logger.info(f"Analysis produced empty summary for {file_path}")
             # Update emotion rows in UI
             self._update_emotion_rows(summary)

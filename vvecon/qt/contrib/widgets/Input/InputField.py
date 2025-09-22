@@ -261,7 +261,7 @@ class InputField(QFrame):
 			self.iconLabel.setStyleSheet("""background-color: transparent; border: none;""")
 			self.iconLabel.installEventFilter(self)
 			self.iconLabel.setPixmap(
-				QPixmap(self.icon).scaled(
+				self.icon.pixmap(ui.size(20, 20)).scaled(
 					20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
 			self.inputContainer.layout.addWidget(self.iconLabel)
 
