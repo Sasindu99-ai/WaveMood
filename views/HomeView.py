@@ -10,7 +10,8 @@ import numpy as np
 import sounddevice as sd
 import soundfile as sf
 from PyQt6.QtCore import QTimer, Qt, pyqtSignal, pyqtSlot, QRectF
-from PyQt6.QtWidgets import QHBoxLayout, QFrame, QSizePolicy, QFileDialog, QVBoxLayout, QSpacerItem, QWidget, QProgressBar, QCheckBox
+from PyQt6.QtWidgets import QHBoxLayout, QFrame, QSizePolicy, QFileDialog, QVBoxLayout, QSpacerItem, QWidget, \
+    QProgressBar, QCheckBox, QMessageBox
 from PyQt6.QtGui import QFont, QPainter, QPen, QBrush, QColor, QLinearGradient
 
 import pyqtgraph as pg
