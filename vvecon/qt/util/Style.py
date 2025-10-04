@@ -1,6 +1,6 @@
-from typing import Tuple, Dict, Any
+from typing import Any, Dict, Tuple
 
-__all__ = ['Style']
+__all__ = ["Style"]
 
 
 class Style:
@@ -13,7 +13,7 @@ class Style:
 		self._args = args
 		self._kwargs = kwargs
 
-	def update(self, *args, **kwargs) -> 'Style':
+	def update(self, *args, **kwargs) -> "Style":
 		deepCopy = self.__class__(self._styleSheet, *self._args, **self._kwargs)
 		deepCopy._args = args if args else self._args
 		deepCopy._kwargs = {**self._kwargs, **kwargs}
@@ -27,10 +27,10 @@ class Style:
 		:param kwargs: Keyword arguments to be passed to the style
 		:return: None
 		"""
-		if not hasattr(widget, 'setStyleSheet'):
-			raise AttributeError(f'Widget {widget} does not have a setStyleSheet method')
+		if not hasattr(widget, "setStyleSheet"):
+			raise AttributeError(f"Widget {widget} does not have a setStyleSheet method")
 		style = self._styleSheet.format(*args, *self._args, **kwargs, **self._kwargs)
-		style = style.replace('[', '{').replace(']', '}')
+		style = style.replace("[", "{").replace("]", "}")
 		widget.setStyleSheet(style)
 
 	@property
@@ -40,5 +40,5 @@ class Style:
 		:return: str
 		"""
 		style = self._styleSheet.format(*self._args, **self._kwargs)
-		style = style.replace('[', '{').replace(']', '}')
+		style = style.replace("[", "{").replace("]", "}")
 		return style

@@ -4,12 +4,12 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QComboBox, QSizePolicy
 
 from Components.Common import Padding
-from vvecon.qt.contrib.widgets import Margin
 from vvecon.qt.contrib.styles.ComboBox import comboBox
+from vvecon.qt.contrib.widgets import Margin
 
 from .BaseCell import BaseCell
 
-__all__ = ['ComboBoxCell']
+__all__ = ["ComboBoxCell"]
 
 
 class ComboBoxCell(BaseCell):
@@ -25,12 +25,12 @@ class ComboBoxCell(BaseCell):
 	comboBox: QComboBox
 
 	def __init__(self, *args, **kwargs):
-		self._items = kwargs.get('items', [])
-		self._padding = kwargs.get('padding', self._padding)
-		self._margin = kwargs.get('margin', self._margin)
-		self._width = kwargs.get('width', self._width)
-		self._height = kwargs.get('height', self._height)
-		self._callback = kwargs.get('callback', self._callback)
+		self._items = kwargs.get("items", [])
+		self._padding = kwargs.get("padding", self._padding)
+		self._margin = kwargs.get("margin", self._margin)
+		self._width = kwargs.get("width", self._width)
+		self._height = kwargs.get("height", self._height)
+		self._callback = kwargs.get("callback", self._callback)
 
 		super(ComboBoxCell, self).__init__(*args, **kwargs)
 
@@ -55,8 +55,8 @@ class ComboBoxCell(BaseCell):
 	def setValues(self, data: List):
 		self.comboBox.clear()
 		for datum in data:
-			self.comboBox.addItem(datum.get('label', ''), datum.get('value', None))
-			if datum.get('selected', False):
+			self.comboBox.addItem(datum.get("label", ""), datum.get("value", None))
+			if datum.get("selected", False):
 				self.comboBox.setCurrentIndex(self.comboBox.count() - 1)
 
 	def getValue(self):

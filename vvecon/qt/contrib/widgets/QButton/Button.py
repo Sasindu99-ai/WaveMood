@@ -5,9 +5,9 @@ from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QSizePolicy, QToolButton
 
 from vvecon.qt.contrib.widgets import Padding
-from vvecon.qt.util import ui, Style
+from vvecon.qt.util import Style, ui
 
-__all__ = ['Button']
+__all__ = ["Button"]
 
 
 class Button(QToolButton):
@@ -15,8 +15,8 @@ class Button(QToolButton):
 
 	def __init__(
 		self,
-		text: str = '',
-		tooltip: str = '',
+		text: str = "",
+		tooltip: str = "",
 		icon: Optional[QIcon] = None,
 		iconSize: Optional[QSize] = None,
 		padding: Optional[Padding] = None,
@@ -77,7 +77,7 @@ class Button(QToolButton):
 			super().setIconSize(self._iconSize)
 		if self._text:
 			spaces = "\u00A0" * self._spaceBetween
-			super().setText(f'{spaces}{self._text}')
+			super().setText(f"{spaces}{self._text}")
 
 		# Adjust size
 		self.adjustSize()

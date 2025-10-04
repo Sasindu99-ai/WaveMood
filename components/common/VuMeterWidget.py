@@ -1,9 +1,10 @@
 from PyQt6.QtCore import QRectF, Qt
-from PyQt6.QtGui import QColor, QPainter, QPen, QBrush, QLinearGradient
+from PyQt6.QtGui import QBrush, QColor, QLinearGradient, QPainter, QPen
 from PyQt6.QtWidgets import QWidget
+
 from vvecon.qt.util import ui
 
-__all__ = ['VuMeterWidget']
+__all__ = ["VuMeterWidget"]
 
 
 class VuMeterWidget(QWidget):
@@ -50,8 +51,8 @@ class VuMeterWidget(QWidget):
             h = self.height()
 
             # draw rounded card-like background with subtle border
-            bg_color = QColor('#2A2F36')
-            border_color = QColor('#353A42')
+            bg_color = QColor("#2A2F36")
+            border_color = QColor("#353A42")
             painter.setPen(QPen(border_color))
             painter.setBrush(QBrush(bg_color))
             rect = self.rect().adjusted(0, 0, 0, 0)

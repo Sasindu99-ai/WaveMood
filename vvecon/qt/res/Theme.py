@@ -5,7 +5,7 @@ from .ColorTheme import ColorTheme
 from .Images import Images
 from .LocaleBuilder import LocaleBuilder
 
-__all__ = ['Theme']
+__all__ = ["Theme"]
 
 from ..logger import logger
 
@@ -49,16 +49,16 @@ class Theme:
         :raises ValueError: If the color theme is not recognized.
         :return: None
         """
-        print(f'Setting {key} to {value}')
-        if key == 'imageTheme':
+        print(f"Setting {key} to {value}")
+        if key == "imageTheme":
             if not isinstance(value, Enum):
-                raise TypeError(f'Image theme must be an instance of Enum, got {type(value)}')
+                raise TypeError(f"Image theme must be an instance of Enum, got {type(value)}")
             self.images.setTheme(value)
-        if key == 'colorTheme':
+        if key == "colorTheme":
             if not isinstance(value, Enum):
-                raise ValueError(f'Color theme must be an instance of Enum, got {type(value)}')
+                raise ValueError(f"Color theme must be an instance of Enum, got {type(value)}")
             if colorTheme := self.colorPalette.get(value):
-                setattr(self, 'colors', colorTheme)
+                self.colors = colorTheme
         super(Theme, self).__setattr__(key, value)
 
     @classmethod
@@ -68,7 +68,7 @@ class Theme:
         :param theme: Enum - The new color theme to set.
         """
         if theme not in cls.colorPalette:
-            raise ValueError(f'Color theme {theme} is not recognized.')
+            raise ValueError(f"Color theme {theme} is not recognized.")
         cls.colorTheme = theme
         cls.colors = cls.colorPalette[theme]
-        logger.info(f'Setting color theme to {theme}')
+        logger.info(f"Setting color theme to {theme}")

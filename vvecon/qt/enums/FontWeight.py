@@ -1,4 +1,4 @@
-__all__ = ['FontWeight']
+__all__ = ["FontWeight"]
 
 
 class FontWeight:

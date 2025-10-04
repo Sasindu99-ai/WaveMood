@@ -1,7 +1,7 @@
 from .ColorTheme import ColorTheme
-from .Images import Images
-from .Theme import Theme
 from .Icons import Icons
+from .Images import Images
 from .LocaleBuilder import LocaleBuilder
+from .Theme import Theme
 
-__all__ = ['Theme', 'ColorTheme', 'Images', 'Icons', 'LocaleBuilder']
+__all__ = ["Theme", "ColorTheme", "Images", "Icons", "LocaleBuilder"]

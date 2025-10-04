@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QCheckBox
 
 from .BaseCell import BaseCell
 
-__all__ = ['CheckBoxCell']
+__all__ = ["CheckBoxCell"]
 
 
 class CheckBoxCell(BaseCell):
@@ -11,7 +11,7 @@ class CheckBoxCell(BaseCell):
 	_onCheckChangedCallback = NotImplemented
 
 	def __init__(self, *args, **kwargs):
-		self._onCheckChangedCallback = kwargs.get('onCheckChanged', NotImplemented)
+		self._onCheckChangedCallback = kwargs.get("onCheckChanged", NotImplemented)
 
 		super(CheckBoxCell, self).__init__(*args, **kwargs)
 
@@ -34,8 +34,8 @@ class CheckBoxCell(BaseCell):
 		self.checkBox.stateChanged.disconnect()
 
 		if isinstance(data, dict):
-			val = data['val']
-			disabled = data['disabled']
+			val = data["val"]
+			disabled = data["disabled"]
 			self.checkBox.setChecked(val)
 			self.checkBox.setDisabled(disabled)
 		else:

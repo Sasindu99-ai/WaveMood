@@ -19,26 +19,27 @@ from vvecon.qt.contrib.widgets.Toast.ToastStyleScheme import (
 )
 from vvecon.qt.res import Icons
 from vvecon.qt.util import ui
+
 from .ToastStyleScheme import ToastStyleScheme
 
-__all__ = ['MessagePopup', 'SuccessPopup', 'DangerPopup', 'WarningPopup']
+__all__ = ["MessagePopup", "SuccessPopup", "DangerPopup", "WarningPopup"]
 
 
 class Colors:
-	success = '#4BB543'
-	danger = '#FF3333'
-	warning = '#FFCC00'
-	info = '#3399FF'
+	success = "#4BB543"
+	danger = "#FF3333"
+	warning = "#FFCC00"
+	info = "#3399FF"
 
 
 class MessagePopup(QDialog):
 	def __init__(
 		self,
 		parent=None,
-		title: str = '',
-		msg: str = '',
+		title: str = "",
+		msg: str = "",
 		img: QPixmap = Icons.Rounded.info.update(color=Colors.info, size=ui.dp(84)).toPixmap(),
-		confirmText: str = 'Proceed',
+		confirmText: str = "Proceed",
 		styleScheme: ToastStyleScheme = ToastStyleScheme(),
 		margin: Margin = Margin(vertical=ui.dp(40), horizontal=ui.dp(80))
 	):
@@ -116,11 +117,11 @@ class MessagePopup(QDialog):
 		self.accept()
 
 	def showOverlay(self):
-		if self.parent and hasattr(self.parent, 'showSpinner'):
+		if self.parent and hasattr(self.parent, "showSpinner"):
 			self.parent.showSpinner()
 
 	def hideOverlay(self):
-		if self.parent and hasattr(self.parent, 'hideSpinner'):
+		if self.parent and hasattr(self.parent, "hideSpinner"):
 			self.parent.hideSpinner()
 
 	def destroy(self, **kwargs):
@@ -138,10 +139,10 @@ class SuccessPopup(MessagePopup):
 	def __init__(
 		self,
 		parent=None,
-		title: str = '',
-		msg: str = '',
+		title: str = "",
+		msg: str = "",
 		img: QPixmap = Icons.Rounded.check_circle.update(color=Colors.success, size=ui.dp(84)).toPixmap(),
-		confirmText: str = 'Proceed',
+		confirmText: str = "Proceed",
 		styleScheme: ToastStyleScheme = successToastStyleSheet,
 		margin: Margin = Margin(vertical=ui.dp(40), horizontal=ui.dp(80))
 	):
@@ -154,10 +155,10 @@ class DangerPopup(MessagePopup):
 	def __init__(
 		self,
 		parent=None,
-		title: str = '',
-		msg: str = '',
+		title: str = "",
+		msg: str = "",
 		img: QPixmap = Icons.Rounded.error.update(color=Colors.danger, size=ui.dp(84)).toPixmap(),
-		confirmText: str = 'Proceed',
+		confirmText: str = "Proceed",
 		styleScheme: ToastStyleScheme = dangerToastStyleSheet,
 		margin: Margin = Margin(vertical=ui.dp(40), horizontal=ui.dp(80))
 	):
@@ -170,10 +171,10 @@ class WarningPopup(MessagePopup):
 	def __init__(
 		self,
 		parent=None,
-		title: str = '',
-		msg: str = '',
+		title: str = "",
+		msg: str = "",
 		img: QPixmap = Icons.Rounded.warning.update(color=Colors.warning, size=ui.dp(84)).toPixmap(),
-		confirmText: str = 'Okay',
+		confirmText: str = "Okay",
 		styleScheme: ToastStyleScheme = warningToastStyleSheet,
 		margin: Margin = Margin(vertical=ui.dp(40), horizontal=ui.dp(80))
 	):

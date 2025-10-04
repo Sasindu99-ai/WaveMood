@@ -1,12 +1,14 @@
-from typing import TypeVar, Dict, Callable, Optional
+from typing import Callable, Dict, Optional, TypeVar
+
 from PyQt6.QtCore import QThreadPool
+
 from vvecon.qt.logger import logger
 
 from .Worker import Worker
 
-T = TypeVar('T', bound='ThreadPool')
+T = TypeVar("T", bound="ThreadPool")
 
-__all__ = ['threadPool']
+__all__ = ["threadPool"]
 
 
 class ThreadPool:
@@ -70,7 +72,7 @@ class ThreadPool:
         try:
             for func_id, runnable in list(self._tasks.items()):
                 runnable.stop()
-                if hasattr(self.threadPool, 'cancel'):
+                if hasattr(self.threadPool, "cancel"):
                     self.threadPool.cancel(runnable)
                 del self._tasks[func_id]
         except RuntimeError as e:

@@ -1,4 +1,4 @@
-__all__ = ['AuthConfig']
+__all__ = ["AuthConfig"]
 
 
 class AuthConfig:

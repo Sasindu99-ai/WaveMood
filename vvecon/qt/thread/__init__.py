@@ -1,4 +1,4 @@
-from .Worker import Worker
 from .ThreadPool import threadPool
+from .Worker import Worker
 
-__all__ = ['Worker', 'threadPool']
+__all__ = ["Worker", "threadPool"]

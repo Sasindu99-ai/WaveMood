@@ -6,9 +6,9 @@ from vvecon.qt.contrib.widgets import Margin
 
 from .CellStyleScheme import CellStyleScheme
 
-__all__ = ['BaseCell']
+__all__ = ["BaseCell"]
 
-T = TypeVar('T', bound='BaseCell')
+T = TypeVar("T", bound="BaseCell")
 
 
 class BaseCell(QWidget, Generic[T]):

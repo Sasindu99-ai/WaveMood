@@ -1,6 +1,6 @@
 from vvecon.qt.util import Style
 
-__all__ = ['primaryCard']
+__all__ = ["primaryCard"]
 
 primaryCard = Style("""
 QFrame [
@@ -9,8 +9,8 @@ QFrame [
 	border: {borderWidth}px solid {borderColor};
 ]
 """, **dict(
-    backgroundColor='#FAFAFA',
+    backgroundColor="#FAFAFA",
     borderRadius=4,
-    borderColor='#D9D9D9',
+    borderColor="#D9D9D9",
     borderWidth=1
 ))

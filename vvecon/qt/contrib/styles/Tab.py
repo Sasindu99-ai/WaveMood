@@ -1,6 +1,6 @@
 from vvecon.qt.util import Style
 
-__all__ = ['basic']
+__all__ = ["basic"]
 
 
 basic = Style("""

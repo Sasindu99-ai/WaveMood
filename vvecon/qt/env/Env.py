@@ -2,13 +2,13 @@ import os
 
 from ..enums import EnvMode
 
-__all__ = ['Env']
+__all__ = ["Env"]
 
 
 class Env:
 	_dotenv: str = None
 
-	def __init__(self, mode: EnvMode, dotenv=f'{os.getcwd()}/.env', **kwargs):
+	def __init__(self, mode: EnvMode, dotenv=f"{os.getcwd()}/.env", **kwargs):
 		self.mode = mode
 		self.debug = mode == EnvMode.DEBUG
 		self._dotenv = dotenv

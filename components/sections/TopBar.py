@@ -1,16 +1,16 @@
 from typing import Callable
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QWidget, QHBoxLayout
+from PyQt6.QtWidgets import QHBoxLayout, QWidget
 
 from enums import TopBarMode
-from vvecon.qt.contrib.widgets import Margin, Button, Padding
 from vvecon.qt.contrib.styles.Button import transparentButton
+from vvecon.qt.contrib.widgets import Button, Margin, Padding
 from vvecon.qt.logger import logger
 from vvecon.qt.res import Icons
 from vvecon.qt.util import ui
 
-__all__ = ['TopBar']
+__all__ = ["TopBar"]
 
 
 class TopBar(QWidget):
@@ -24,7 +24,7 @@ class TopBar(QWidget):
         self.setLayout(self.layout)
 
         self.backBtn = Button(
-            '', icon=Icons.Filled.Rounded.arrow_left_alt.update(color='#FFFFFF', background='transparent'),
+            "", icon=Icons.Filled.Rounded.arrow_left_alt.update(color="#FFFFFF", background="transparent"),
             iconSize=ui.size(24, 24), padding=Padding(horizontal=ui.dp(12), vertical=ui.dp(6)),
             styleSheet=transparentButton
         )
@@ -34,7 +34,7 @@ class TopBar(QWidget):
     def setMode(self, mode: TopBarMode):
         self.mode = mode
         if self.mode == TopBarMode.EMPTY:
-            logger.debug('Setting TopBar to EMPTY mode')
+            logger.debug("Setting TopBar to EMPTY mode")
             self.setVisible(False)
             self.backBtn.setVisible(False)
             self.setFixedHeight(0)

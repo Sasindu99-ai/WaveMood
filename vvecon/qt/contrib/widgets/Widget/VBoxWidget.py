@@ -7,7 +7,7 @@ from vvecon.qt.contrib.widgets import Margin
 
 from .Widget import Widget
 
-__all__ = ['VBoxWidget']
+__all__ = ["VBoxWidget"]
 
 
 class VBoxWidget(Widget):

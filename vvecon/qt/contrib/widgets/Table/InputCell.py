@@ -1,21 +1,21 @@
 from typing import Any, Callable, Optional
 
-from vvecon.qt.contrib.widgets.Input import InputField
 from Enums import InputType
+from vvecon.qt.contrib.widgets.Input import InputField
 
 from .BaseCell import BaseCell
 
-__all__ = ['InputCell']
+__all__ = ["InputCell"]
 
 
 class InputCell(BaseCell):
 	inputField: InputField
-	_name: str = ''
+	_name: str = ""
 	_inputType: InputType = InputType.TEXT
 	_width: Optional[int] = None
 	_height: int = 40
 	_hint: Optional[str] = None
-	_placeholder: str = ''
+	_placeholder: str = ""
 	_isLight: bool = True
 	_icon: Optional[str] = None
 	_step: float = 0.0
@@ -28,22 +28,22 @@ class InputCell(BaseCell):
 	_default: Optional[float] = None
 
 	def __init__(self,*args, **kwargs):
-		self._name = kwargs.get('name', self._name)
-		self._inputType = kwargs.get('inputType', self._inputType)
-		self._width = kwargs.get('width', self._width)
-		self._height = kwargs.get('height', self._height)
-		self._hint = kwargs.get('hint', self._hint)
-		self._placeholder = kwargs.get('placeholder', self._placeholder)
-		self._isLight = kwargs.get('isLight', self._isLight)
-		self._icon = kwargs.get('icon', self._icon)
-		self._step = kwargs.get('step', self._step)
-		self._maxValue = kwargs.get('maxValue', self._maxValue)
-		self._minValue = kwargs.get('minValue', self._minValue)
-		self._showTooltipIcon = kwargs.get('showTooltipIcon', self._showTooltipIcon)
-		self._validator = kwargs.get('validator', self._validator)
-		self._onTextChanged = kwargs.get('onTextChanged', self._onTextChanged)
-		self._setDisabled = kwargs.get('setDisabled', self._setDisabled)
-		self._default = kwargs.get('default', self._default)
+		self._name = kwargs.get("name", self._name)
+		self._inputType = kwargs.get("inputType", self._inputType)
+		self._width = kwargs.get("width", self._width)
+		self._height = kwargs.get("height", self._height)
+		self._hint = kwargs.get("hint", self._hint)
+		self._placeholder = kwargs.get("placeholder", self._placeholder)
+		self._isLight = kwargs.get("isLight", self._isLight)
+		self._icon = kwargs.get("icon", self._icon)
+		self._step = kwargs.get("step", self._step)
+		self._maxValue = kwargs.get("maxValue", self._maxValue)
+		self._minValue = kwargs.get("minValue", self._minValue)
+		self._showTooltipIcon = kwargs.get("showTooltipIcon", self._showTooltipIcon)
+		self._validator = kwargs.get("validator", self._validator)
+		self._onTextChanged = kwargs.get("onTextChanged", self._onTextChanged)
+		self._setDisabled = kwargs.get("setDisabled", self._setDisabled)
+		self._default = kwargs.get("default", self._default)
 
 		super(InputCell, self).__init__(*args, **kwargs)
 
@@ -76,8 +76,8 @@ class InputCell(BaseCell):
 		self.inputField.inputEdit.blockSignals(True)
 
 		if isinstance(data, dict):
-			val = data['val']
-			disabled = data['disabled']
+			val = data["val"]
+			disabled = data["disabled"]
 			self.inputField.setValue(val)
 			self.inputField.setDisabled(disabled)
 		else:

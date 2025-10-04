@@ -3,11 +3,11 @@ import logging
 import os
 from typing import Dict
 
-__all__ = ['logger']
+__all__ = ["logger"]
 
-log = logging.getLogger('Logger')
+log = logging.getLogger("Logger")
 logging.basicConfig(
-	format='%(asctime)s [%(filename)s:%(lineno)d] %(levelname)s: %(message)s',
+	format="%(asctime)s [%(filename)s:%(lineno)d] %(levelname)s: %(message)s",
 	level=logging.DEBUG)
 
 
@@ -42,9 +42,9 @@ class Logger:
 	"""
 	_userName: str = NotImplemented
 	_level: int | str = logging.DEBUG
-	_format: str = '%(asctime)s %(message)s'
+	_format: str = "%(asctime)s %(message)s"
 	_messageConfig: Dict[str, str] = dict()
-	_messageFormat: str = '[{filename}' + ':' + '{lineno}] {level}' + ':' + ' | {userName} - {msg}'
+	_messageFormat: str = "[{filename}" + ":" + "{lineno}] {level}" + ":" + " | {userName} - {msg}"
 
 	def setUserName(self, userName: str) -> None:
 		"""
@@ -106,7 +106,7 @@ class Logger:
 			lineno=lineno,
 			level=level.upper(),
 			userName=self._userName
-			if self._userName is not NotImplemented else '',
+			if self._userName is not NotImplemented else "",
 			msg=msg,
 			**self._messageConfig)
 
@@ -117,7 +117,7 @@ class Logger:
 		:param kwargs: Keyword arguments
 		:return: None
 		"""
-		log.debug(self.formatMsg(msg, 'debug'), **kwargs)
+		log.debug(self.formatMsg(msg, "debug"), **kwargs)
 
 	def info(self, msg, **kwargs) -> None:
 		"""
@@ -127,9 +127,9 @@ class Logger:
 		:return: None
 		"""
 		try:
-			log.info(self.formatMsg(str(msg), 'info'), **kwargs)
+			log.info(self.formatMsg(str(msg), "info"), **kwargs)
 		except UnicodeEncodeError:
-			log.info(self.formatMsg(str(msg.encode('utf-8')), 'info'), **kwargs)
+			log.info(self.formatMsg(str(msg.encode("utf-8")), "info"), **kwargs)
 
 	def critical(self, msg, **kwargs) -> None:
 		"""
@@ -138,7 +138,7 @@ class Logger:
 		:param kwargs: Keyword arguments
 		:return: None
 		"""
-		log.critical(self.formatMsg(msg, 'critical'), **kwargs)
+		log.critical(self.formatMsg(msg, "critical"), **kwargs)
 
 	def warning(self, msg, **kwargs) -> None:
 		"""
@@ -147,7 +147,7 @@ class Logger:
 		:param kwargs: Keyword arguments
 		:return: None
 		"""
-		log.warning(self.formatMsg(msg, 'warning'), **kwargs)
+		log.warning(self.formatMsg(msg, "warning"), **kwargs)
 
 	def error(self, msg, **kwargs) -> None:
 		"""
@@ -156,7 +156,7 @@ class Logger:
 		:param kwargs: Keyword arguments
 		:return: None
 		"""
-		log.error(self.formatMsg(msg, 'error'), **kwargs)
+		log.error(self.formatMsg(msg, "error"), **kwargs)
 
 
 logger = Logger()

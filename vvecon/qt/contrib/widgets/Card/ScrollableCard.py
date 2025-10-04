@@ -8,7 +8,7 @@ from vvecon.qt.util import ui
 
 from .ScrollArea import ScrollArea
 
-__all__ = ['ScrollableCard']
+__all__ = ["ScrollableCard"]
 
 _scrollAreaStyleSheet = """
 QScrollArea {
@@ -58,7 +58,7 @@ class ScrollableCard(QFrame):
 
 	def __init__(self, parent: Optional[QWidget] = None, margin: Optional[Margin] = None):
 		super().__init__(parent)
-		self.setObjectName('border')
+		self.setObjectName("border")
 
 		self.parent = parent
 
@@ -76,7 +76,7 @@ class ScrollableCard(QFrame):
 		self.scrollArea.verticalScrollBarStateChanged.connect(self.onScrollAreaResized)
 
 		self.scrollAreaWidget = QWidget(self)
-		self.scrollAreaWidget.setStyleSheet('background-color: transparent;')
+		self.scrollAreaWidget.setStyleSheet("background-color: transparent;")
 		self.scrollAreaWidget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 		self.scrollArea.setWidget(self.scrollAreaWidget)
 

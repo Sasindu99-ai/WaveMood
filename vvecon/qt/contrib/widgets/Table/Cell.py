@@ -2,11 +2,12 @@ from typing import Any, Callable, Optional
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QLabel
+
 from vvecon.qt.contrib.widgets import Margin, Padding
 
 from .BaseCell import BaseCell
 
-__all__ = ['Cell']
+__all__ = ["Cell"]
 
 
 class Cell(BaseCell):
@@ -20,12 +21,12 @@ class Cell(BaseCell):
 	label: QLabel
 
 	def __init__(self, *args, **kwargs):
-		self._extract = kwargs.get('extract')
-		self._reformat = kwargs.get('reformat')
+		self._extract = kwargs.get("extract")
+		self._reformat = kwargs.get("reformat")
 
-		self.textAlign = kwargs.get('textAlign', Qt.AlignmentFlag.AlignCenter)
-		self._padding = kwargs.get('padding', self._padding)
-		self._margin = kwargs.get('margin', self._margin)
+		self.textAlign = kwargs.get("textAlign", Qt.AlignmentFlag.AlignCenter)
+		self._padding = kwargs.get("padding", self._padding)
+		self._margin = kwargs.get("margin", self._margin)
 		super(Cell, self).__init__(*args, **kwargs)
 
 	def setupCell(self):
@@ -63,4 +64,4 @@ class Cell(BaseCell):
 				return
 			self.label.setText(self._reformat.format(data) if self._reformat else data)
 		except IndexError:
-			raise ValueError('Invalid data, unable to extract values')
+			raise ValueError("Invalid data, unable to extract values")

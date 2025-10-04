@@ -1,15 +1,16 @@
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, Generic, List, TypeVar, Optional
+from typing import Any, Dict, Generic, List, Optional, TypeVar
 
-import pytz # type: ignore
+import pytz  # type: ignore
 from icecream import ic
+
 from vvecon.qt.exceptions import ParseError
 from vvecon.qt.models.util import getAllAnnotations
 
-__all__ = ['ModelAbstract']
+__all__ = ["ModelAbstract"]
 
-T = TypeVar('T', bound='ModelAbstract')
+T = TypeVar("T", bound="ModelAbstract")
 
 
 class ModelAbstract(Generic[T]):
@@ -31,16 +32,16 @@ class ModelAbstract(Generic[T]):
 	def _convertInt(cls, value: Any) -> int:
 		return int(float(value))
 
-	_dateFormat = '%Y-%m-%d %H:%M:%S'
+	_dateFormat = "%Y-%m-%d %H:%M:%S"
 	_dateFormats = [
-		'%Y-%m-%d %H:%M:%S',
-		'%Y-%m-%d %H:%M:%S.%f',
-		'%Y-%m-%dT%H:%M:%S',
-		'%Y-%m-%dT%H:%M:%S.%f',
-		'%Y-%m-%d',
-		'%Y-%m-%dT%H:%M:%S',
-		'%Y-%m-%dT%H:%M:%S.%f%z',
-		'%Y-%m-%dT%H:%M:%S%z'
+		"%Y-%m-%d %H:%M:%S",
+		"%Y-%m-%d %H:%M:%S.%f",
+		"%Y-%m-%dT%H:%M:%S",
+		"%Y-%m-%dT%H:%M:%S.%f",
+		"%Y-%m-%d",
+		"%Y-%m-%dT%H:%M:%S",
+		"%Y-%m-%dT%H:%M:%S.%f%z",
+		"%Y-%m-%dT%H:%M:%S%z"
 	]
 	_typeCasting = dict(str=str, int=int, float=float, bool=bool)
 
@@ -52,7 +53,7 @@ class ModelAbstract(Generic[T]):
 
 	@classmethod
 	def _convertDict(cls, value: Any, dateType: type) -> Dict:
-		if not hasattr(dateType, '__args__'):
+		if not hasattr(dateType, "__args__"):
 			return value
 		return {
 			key: cls._convert(item, dateType.__args__[1])
@@ -63,7 +64,7 @@ class ModelAbstract(Generic[T]):
 	def _convertOptional(cls, value: Any, dateType: type) -> Any:
 		if value is None:
 			return None
-		if not hasattr(dateType, '__args__'):
+		if not hasattr(dateType, "__args__"):
 			return value
 		return cls._convert(value, dateType.__args__[0])
 
@@ -71,7 +72,7 @@ class ModelAbstract(Generic[T]):
 	def _convertList(cls, value: Any, dateType: type) -> Any:
 		return [
 			cls._convert(
-				item, (list(dateType.__args__)[0] if hasattr(dateType, '__args__') else Any)
+				item, (list(dateType.__args__)[0] if hasattr(dateType, "__args__") else Any)
 			) for item in value
 		]
 
@@ -94,7 +95,7 @@ class ModelAbstract(Generic[T]):
 				utc_timezone = pytz.utc
 				return utc_timezone.localize(value)
 			return value
-		if value.endswith('Z'):
+		if value.endswith("Z"):
 			value = value[:-1]
 		convertedDate: Optional[datetime] = None
 		for dateFormat in cls._dateFormats:
@@ -122,13 +123,13 @@ class ModelAbstract(Generic[T]):
 		try:
 			if dateType is datetime:
 				return cls._convertDate(value)
-			if str(dateType).startswith('typing.Optional'):
+			if str(dateType).startswith("typing.Optional"):
 				return cls._convertOptional(value, dateType)
-			if str(dateType).startswith('typing.List'):
+			if str(dateType).startswith("typing.List"):
 				return cls._convertList(value, dateType)
-			if str(dateType).startswith('typing.Dict'):
+			if str(dateType).startswith("typing.Dict"):
 				return cls._convertDict(value, dateType)
-			if str(dateType).startswith('typing.Any'):
+			if str(dateType).startswith("typing.Any"):
 				return value
 			if dateType in cls._typeCasting.values():
 				if dateType is int:
@@ -141,11 +142,11 @@ class ModelAbstract(Generic[T]):
 			ic(value, dateType)
 			ic.disable()
 			line = 0
-			column = ''
+			column = ""
 			if e.__traceback__ is not None:
-				line = e.__traceback__.tb_lineno if hasattr(e.__traceback__, 'tb_lineno') else 0
+				line = e.__traceback__.tb_lineno if hasattr(e.__traceback__, "tb_lineno") else 0
 				column = e.__traceback__.tb_frame.f_code.co_filename
-			raise ParseError('Type Error', line, column)
+			raise ParseError("Type Error", line, column)
 
 	@classmethod
 	def fromList(cls, data: List) -> List:
@@ -173,9 +174,9 @@ class ModelAbstract(Generic[T]):
 		"""
 		if isinstance(data, datetime):
 			return data.strftime(self._dateFormat)
-		if hasattr(data, 'json'):
+		if hasattr(data, "json"):
 			return data.json()
-		if isinstance(data, list) and len(data) > 0 and hasattr(data[0], 'json'):
+		if isinstance(data, list) and len(data) > 0 and hasattr(data[0], "json"):
 			return [item.json() for item in data]
 		if isinstance(data, list) and len(data) > 0 and isinstance(data[0], datetime):
 			return [item.strftime(self._dateFormat) for item in data]
@@ -198,9 +199,9 @@ class ModelAbstract(Generic[T]):
 	def __repr__(self):
 		return """{}({})""".format(
 			self.__class__.__name__,
-			', '.join(
+			", ".join(
 				[
-					f'{key}={value}'
+					f"{key}={value}"
 					for key, value in self.__dict__.items()
 				]
 			)

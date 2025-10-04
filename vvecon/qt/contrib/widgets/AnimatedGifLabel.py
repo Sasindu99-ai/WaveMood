@@ -1,6 +1,6 @@
-from PyQt6.QtWidgets import QLabel
-from PyQt6.QtGui import QMovie
 from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtGui import QMovie
+from PyQt6.QtWidgets import QLabel
 
 
 class AnimatedGifLabel(QLabel):

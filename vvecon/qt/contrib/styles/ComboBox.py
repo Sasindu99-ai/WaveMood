@@ -2,7 +2,7 @@ from Components.Common import Padding
 from vvecon.qt.enums import FontWeight
 from vvecon.qt.util import Style
 
-__all__ = ['comboBox']
+__all__ = ["comboBox"]
 
 comboBox = Style("""
 QComboBox [
@@ -58,18 +58,18 @@ QComboBox QAbstractItemView::item [
 ]
 
 """, **dict(
-	color='black',
+	color="black",
 	fontSize=12,
-	textAlign='center',
-	border='1px solid #D9D9D9',
-	backgroundColor='#FFFFFF',
+	textAlign="center",
+	border="1px solid #D9D9D9",
+	backgroundColor="#FFFFFF",
 	padding=Padding(6, 10).qss,
 	radius=6,
 	fontWeight=FontWeight.Normal,
-	hoverBorder='#A6A6A6',
-	hoverBackground='#F5F5F5',
-	focusBorder='#0078D4',
-	focusBackground='#E6F2FF',
-	dropdownBackground='#FFFFFF',
-	selectionBackground='#0078D4'
+	hoverBorder="#A6A6A6",
+	hoverBackground="#F5F5F5",
+	focusBorder="#0078D4",
+	focusBackground="#E6F2FF",
+	dropdownBackground="#FFFFFF",
+	selectionBackground="#0078D4"
 ))

@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import QLayout, QVBoxLayout, QWidget
 
 from vvecon.qt.contrib.widgets import Margin
 
-__all__ = ['Widget']
+__all__ = ["Widget"]
 
 
 class Widget(QWidget):
@@ -27,7 +27,7 @@ class Widget(QWidget):
 		self._layout.setSpacing(spacing)
 		self._layout.setContentsMargins(margin if margin else Margin(0))
 		self._layout.setAlignment(alignment)
-		self.setStyleSheet('background-color: transparent')
+		self.setStyleSheet("background-color: transparent")
 		self.setLayout(self._layout)
 
 	def addWidget(self, w: QWidget, **kwargs):

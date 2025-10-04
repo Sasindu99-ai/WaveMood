@@ -3,11 +3,11 @@ from PyQt6.QtGui import QIcon, QPalette
 
 from components.sections import TopBar
 from enums import Theme
+from res import AppTheme
 from vvecon.qt.core import Window
 from vvecon.qt.util import ui
-from res import AppTheme
 
-__all__ = ['WaveMood']
+__all__ = ["WaveMood"]
 
 
 class WaveMood(Window):
@@ -16,8 +16,8 @@ class WaveMood(Window):
 	def __init__(self):
 		super(WaveMood, self).__init__(row=4, column=2)
 
-		self.setObjectName('MainWindow')
-		self.setWindowTitle('WaveMood')
+		self.setObjectName("MainWindow")
+		self.setWindowTitle("WaveMood")
 		AppTheme.setColorTheme(Theme.DARK)
 		self.setWindowIcon(QIcon(ui.pixmap(
 			AppTheme.images.logo, 32, 32, Qt.AspectRatioMode.KeepAspectRatioByExpanding,
@@ -48,34 +48,36 @@ class WaveMood(Window):
 			self.showFullScreen()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	import faulthandler
 	import logging
 	import os
 	import sys
-	from env import env
+
 	from PyQt6.QtCore import QCoreApplication
 	from PyQt6.QtGui import QFont, QFontDatabase
 	from PyQt6.QtWidgets import QApplication
 
+	from env import env
+
 	env.init()
 
 	QCoreApplication.setAttribute(Qt.ApplicationAttribute.AA_ShareOpenGLContexts)
-	logging.getLogger('urllib3').setLevel(logging.DEBUG)
+	logging.getLogger("urllib3").setLevel(logging.DEBUG)
 	faulthandler.enable()
 
-	if getattr(sys, 'frozen', False):
+	if getattr(sys, "frozen", False):
 		ROOTPATH = os.path.dirname(sys.executable)
 	else:
-		ROOTPATH = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+		ROOTPATH = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
 	os.chdir(ROOTPATH)
-	os.environ.setdefault('BASE_PATH', ROOTPATH)
-	os.environ.setdefault('APP_NAME', 'WaveMood')
+	os.environ.setdefault("BASE_PATH", ROOTPATH)
+	os.environ.setdefault("APP_NAME", "WaveMood")
 
 	app = QApplication(sys.argv)
 	# ic.disable()
-	QFontDatabase.addApplicationFont('res/fonts/Inter.ttf')
-	app.setFont(QFont('Inter', 9))
+	QFontDatabase.addApplicationFont("res/fonts/Inter.ttf")
+	app.setFont(QFont("Inter", 9))
 
 	from vvecon.qt.res import Icons
 	app.setWindowIcon(Icons.settings_applications)

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Callable, Optional
 
-from PyQt6.QtCore import QDate, QSize, Qt, QTimer, pyqtSignal, QEvent
+from PyQt6.QtCore import QDate, QEvent, QSize, Qt, QTimer, pyqtSignal
 from PyQt6.QtGui import QColor, QIcon, QPixmap
 from PyQt6.QtWidgets import (
 	QDialog,
@@ -18,12 +18,13 @@ from PyQt6.QtWidgets import (
 from vvecon.qt.enums import InputType
 from vvecon.qt.res import Icons
 from vvecon.qt.util import Util, ui
-from .StyleScheme import StyleScheme
+
 from .. import Button
 from ..Calender.CalenderPopup import CalendarPopup
 from ..Toast import WarningPopup
+from .StyleScheme import StyleScheme
 
-__all__ = ['InputField']
+__all__ = ["InputField"]
 
 from ... import styles
 
@@ -66,7 +67,7 @@ class InputField(QFrame):
 	plusButton = None
 	minusButton = None
 	dateButton = None
-	name: str = ''
+	name: str = ""
 	showTooltipIcon: bool = False
 	dateSelected = pyqtSignal(str)
 	_validator: Optional[Callable] = None
@@ -78,12 +79,12 @@ class InputField(QFrame):
 	def __init__(
 		self,
 		parent=None,
-		name='',
+		name="",
 		inType: InputType = InputType.TEXT,
 		width=None,
 		height=40,
 		hint=None,
-		placeholder='',
+		placeholder="",
 		isLight=False,
 		icon=None,
 		step: float = 0,
@@ -159,7 +160,7 @@ class InputField(QFrame):
 		self.hintButton = Button(
 			icon=Icons.Filled.Rounded.add,
 			iconSize=ui.size(20, 20),
-			styleSheet='background-color: transparent; border: none;',
+			styleSheet="background-color: transparent; border: none;",
 			onClick=lambda: self.show_toast(self.hint)
 		)
 		self.hintButton.setFixedSize(ui.size(35, 35))
@@ -221,7 +222,7 @@ class InputField(QFrame):
 			self.inputEdit.setText(str(val))
 		elif self.inType == InputType.DATE:
 			if isinstance(val, datetime):
-				self.inputEdit.setText(val.strftime('%Y-%m-%d'))
+				self.inputEdit.setText(val.strftime("%Y-%m-%d"))
 
 	def getValue(self):
 		if self.inType == InputType.TEXT or self.inType == InputType.SEARCH:
@@ -229,7 +230,7 @@ class InputField(QFrame):
 		elif self.inType == InputType.NUMBER and isinstance(self.step, int):
 			val = (
 				int(self.inputEdit.text())
-				if self.inputEdit.text() != '' and self.inputEdit.text() != '-'
+				if self.inputEdit.text() != "" and self.inputEdit.text() != "-"
 				else 0
 			)
 			cursorCursor = self.inputEdit.cursorPosition()
@@ -239,7 +240,7 @@ class InputField(QFrame):
 		elif self.inType == InputType.NUMBER and isinstance(self.step, float):
 			val = (
 				float(self.inputEdit.text())
-				if self.inputEdit.text() != '' and self.inputEdit.text() != '-'
+				if self.inputEdit.text() != "" and self.inputEdit.text() != "-"
 				else 0.0
 			)
 			cursorCursor = self.inputEdit.cursorPosition()
@@ -247,8 +248,8 @@ class InputField(QFrame):
 			self.inputEdit.setCursorPosition(cursorCursor)
 			return val
 		elif self.inType == InputType.DATE:
-			if self.inputEdit.text() != '':
-				return datetime.strptime(self.inputEdit.text(), '%Y-%m-%d')
+			if self.inputEdit.text() != "":
+				return datetime.strptime(self.inputEdit.text(), "%Y-%m-%d")
 			else:
 				return None
 		return None
@@ -269,7 +270,7 @@ class InputField(QFrame):
 		self.plusButton = Button(
 			icon=Icons.Filled.Rounded.add,
 			iconSize=ui.size(20, 20),
-			styleSheet='background-color: transparent; border: none;',
+			styleSheet="background-color: transparent; border: none;",
 			onClick=self.increaseValue
 		)
 		self.plusButton.setFixedSize(ui.size(40, 25))
@@ -277,15 +278,15 @@ class InputField(QFrame):
 		self.minusButton = Button(
 			icon=Icons.Filled.Rounded.remove,
 			iconSize=ui.size(20, 20),
-			styleSheet='background-color: transparent; border: none;',
+			styleSheet="background-color: transparent; border: none;",
 			onClick=self.decreaseValue
 		)
 		self.minusButton.setFixedSize(ui.size(40, 25))
 
 		if self.step and isinstance(self.step, int):
-			self.inputEdit.setText('0')
+			self.inputEdit.setText("0")
 		elif self.step and isinstance(self.step, float):
-			self.inputEdit.setText('0.0')
+			self.inputEdit.setText("0.0")
 
 		self.inputContainer.layout.insertWidget(0, self.inputEdit)
 		self.inputContainer.layout.addWidget(self.plusButton)
@@ -321,7 +322,7 @@ class InputField(QFrame):
 		)
 		self.inputContainer.layout.addWidget(self.dateButton)
 
-		self.inputEdit.setPlaceholderText('YYYY-MM-DD')
+		self.inputEdit.setPlaceholderText("YYYY-MM-DD")
 		self.inputEdit.setReadOnly(True)
 
 		self.dateButton.clicked.connect(self.show_calendar_dialog)
@@ -334,18 +335,18 @@ class InputField(QFrame):
 		self.styleScheme.errorContainer.apply(self.inputContainer)  # type: ignore
 		self.bottomLabel.show()
 		self.styleScheme.errorBottomLabel.apply(self.bottomLabel)  # type: ignore
-		self.bottomLabel.setText(msg if msg else 'Error')
+		self.bottomLabel.setText(msg if msg else "Error")
 		self.inputEdit.setFocus()
 
 	def displaySuccess(self, msg: str):
 		self.styleScheme.successContainer.apply(self.inputContainer)  # type: ignore
 		self.bottomLabel.show()
 		self.styleScheme.successBottomLabel.apply(self.bottomLabel)  # type: ignore
-		self.bottomLabel.setText(msg if msg else 'Error')
+		self.bottomLabel.setText(msg if msg else "Error")
 
 	def show_toast(self, message):
 		if not self.toast:
-			self.toast = WarningPopup(self, 'Waring', message)
+			self.toast = WarningPopup(self, "Waring", message)
 
 		button_pos = self.hintButton.mapToGlobal(
 			self.hintButton.rect().topRight())
@@ -353,12 +354,12 @@ class InputField(QFrame):
 
 	def increaseValue(self):
 		if self.step:
-			scale = 10 ** len(str(self.step).split('.')[1]) if isinstance(self.step, float) else 1
-			value = int(float(self.inputEdit.text()) * scale) if self.inputEdit.text() != '' else 0
+			scale = 10 ** len(str(self.step).split(".")[1]) if isinstance(self.step, float) else 1
+			value = int(float(self.inputEdit.text()) * scale) if self.inputEdit.text() != "" else 0
 			step = int(self.step * scale)
 			value += step
-			decimal_places = len(str(self.step).split('.')[1]) if isinstance(self.step, float) else 0
-			finalValue = f'{value / scale:.{decimal_places}f}'
+			decimal_places = len(str(self.step).split(".")[1]) if isinstance(self.step, float) else 0
+			finalValue = f"{value / scale:.{decimal_places}f}"
 			if self.maxValue is not None and float(self.maxValue) >= float(finalValue):
 				self.inputEdit.setText(finalValue)
 			elif self.maxValue is None:
@@ -366,12 +367,12 @@ class InputField(QFrame):
 
 	def decreaseValue(self):
 		if self.step:
-			scale = 10 ** len(str(self.step).split('.')[1]) if isinstance(self.step, float) else 1
-			value = int(float(self.inputEdit.text()) * scale) if self.inputEdit.text() != '' else 0
+			scale = 10 ** len(str(self.step).split(".")[1]) if isinstance(self.step, float) else 1
+			value = int(float(self.inputEdit.text()) * scale) if self.inputEdit.text() != "" else 0
 			step = int(self.step * scale)
 			value -= step
-			decimal_places = len(str(self.step).split('.')[1]) if isinstance(self.step, float) else 0
-			finalValue = f'{value / scale:.{decimal_places}f}'
+			decimal_places = len(str(self.step).split(".")[1]) if isinstance(self.step, float) else 0
+			finalValue = f"{value / scale:.{decimal_places}f}"
 			if self.minValue is not None and float(self.minValue) <= float(finalValue):
 				self.inputEdit.setText(finalValue)
 			elif self.minValue is None:
@@ -388,7 +389,7 @@ class InputField(QFrame):
 
 		body = QFrame()
 		body.setLayout(QVBoxLayout())
-		body.setStyleSheet('border-radius: 16px;background-color: #F5F5F5;')
+		body.setStyleSheet("border-radius: 16px;background-color: #F5F5F5;")
 
 		shadow_effect = QGraphicsDropShadowEffect(dialog)
 		shadow_effect.setBlurRadius(60)
@@ -403,7 +404,7 @@ class InputField(QFrame):
 		calendar = CalendarPopup(body)
 
 		if self.inputEdit.text():
-			selected_date = QDate.fromString(self.inputEdit.text(), 'yyyy-MM-dd')
+			selected_date = QDate.fromString(self.inputEdit.text(), "yyyy-MM-dd")
 		else:
 			selected_date = QDate.currentDate()
 
@@ -417,7 +418,7 @@ class InputField(QFrame):
 		button_layout.setContentsMargins(20, 0, 20, 0)
 
 		clear_button = Button(
-			text='Clear',
+			text="Clear",
 			styleSheet=styles.Button.secondaryButton.qss,
 			onClick=lambda: self.clear_selected_date(calendar, dialog)
 		)
@@ -426,14 +427,14 @@ class InputField(QFrame):
 		spacer = QSpacerItem(10, 10, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
 
 		ok_button = Button(
-			text='OK',
+			text="OK",
 			styleSheet=styles.Button.primaryButton.qss,
 			onClick=lambda: self.set_date_from_calendar_signal(calendar.selectedDate(), dialog)
 		)
 		ok_button.setCursor(Qt.CursorShape.PointingHandCursor)
 
 		cancel_button = Button(
-			text='Cancel',
+			text="Cancel",
 			styleSheet=styles.Button.secondaryButton.qss,
 			onClick=dialog.reject
 		)
@@ -454,7 +455,7 @@ class InputField(QFrame):
 		dialog.exec()
 
 	def set_date_from_calendar_signal(self, date, dialog):
-		self.inputEdit.setText(date.toString('yyyy-MM-dd'))
+		self.inputEdit.setText(date.toString("yyyy-MM-dd"))
 		dialog.accept()
 		self.dateSelected.emit(self.inputEdit.text())
 
@@ -464,7 +465,7 @@ class InputField(QFrame):
 		dialog.accept()
 
 	def checkMaxAndMin(self):
-		if self.inputEdit.text() == '':
+		if self.inputEdit.text() == "":
 			return
 		if isinstance(self.step, int):
 			val = int(self.inputEdit.text())
@@ -482,14 +483,14 @@ class InputField(QFrame):
 		self.inputEdit.setText(str(val))
 
 	def eventFilter(self, source, event):
-		if hasattr(self, 'hintButton') and source == self.hintButton:
+		if hasattr(self, "hintButton") and source == self.hintButton:
 			if event.type() == QEvent.Type.Enter:  # Mouse hover starts
 				self.show_toast(self.hint)
 			elif event.type() == QEvent.Type.Leave:  # Mouse hover ends
 				if self.toast:
 					self.toast.hide()
 
-		elif hasattr(self, 'inputEdit') and source == self.inputEdit and self.inType == InputType.NUMBER:
+		elif hasattr(self, "inputEdit") and source == self.inputEdit and self.inType == InputType.NUMBER:
 			if event.type() == QEvent.Type.KeyPress:
 				key = event.key()
 				text = event.text()
@@ -500,20 +501,20 @@ class InputField(QFrame):
 					Qt.Key.Key_Alt, Qt.Key.Key_Shift, Qt.Key.Key_Control, Qt.Key.Key_End
 					)
 					or text.isdigit()
-					or text == '-'
-					or (isinstance(self.step, float) and text == '.')
+					or text == "-"
+					or (isinstance(self.step, float) and text == ".")
 				):
 					return super(InputField, self).eventFilter(source, event)
 				else:
 					# Handle invalid input
-					self.inputEdit.setText('0')  # Reset to 0 for invalid input
+					self.inputEdit.setText("0")  # Reset to 0 for invalid input
 					return True  # Consume the event
 		elif self.inType == InputType.DATE:
 			if event.type() == QEvent.Type.MouseButtonPress:
 				self.show_calendar_dialog()
 				return True
 		elif (
-				hasattr(self, 'inputContainer') and hasattr(self, 'iconLabel') and
+				hasattr(self, "inputContainer") and hasattr(self, "iconLabel") and
 				event.type() == QEvent.Type.MouseButtonPress and
 				(source == self.iconLabel)
 		):
@@ -549,7 +550,7 @@ class InputField(QFrame):
 		if self._validator:
 			return self._validator(
 				str(self.getValue()),
-				Util.either(self.name, self.hint, self.placeholder, default='Input field'),
+				Util.either(self.name, self.hint, self.placeholder, default="Input field"),
 				callback=self.displayError,
 			)
 		return True
@@ -566,7 +567,7 @@ class InputField(QFrame):
 
 	def setDisabled(self, val: bool = True):
 		self.inputEdit.setReadOnly(val)
-		if hasattr(self, 'plusButton') and self.plusButton:
+		if hasattr(self, "plusButton") and self.plusButton:
 			self.plusButton.setDisabled(val)
-		if hasattr(self, 'minusButton') and self.minusButton:
+		if hasattr(self, "minusButton") and self.minusButton:
 			self.minusButton.setDisabled(val)

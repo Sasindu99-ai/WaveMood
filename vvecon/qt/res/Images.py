@@ -2,7 +2,7 @@ import os
 from enum import Enum
 from typing import Dict
 
-__all__ = ['Images']
+__all__ = ["Images"]
 
 
 class Images:
@@ -44,13 +44,13 @@ class Images:
     >>> print(images.helody)  # Should print the path to the helody.png image in the light theme
     >>> print(images.some_non_existent_image)  # Raises FileNotFoundError
     """
-    _base ='res/images/'
+    _base ="res/images/"
     _theme: Enum = NotImplemented
     _default: Enum = NotImplemented
     _backup: Dict[str, str] = dict()
     _attributes = (
-        '_base', '_theme', '_default', '_backup', 'setBase', 'getBase', 'setTheme', 'getTheme', 'setDefaultTheme',
-        'getDefaultTheme', 'getImage'
+        "_base", "_theme", "_default", "_backup", "setBase", "getBase", "setTheme", "getTheme", "setDefaultTheme",
+        "getDefaultTheme", "getImage"
     )
 
     def __setattr__(self, key, value) -> None:
@@ -63,7 +63,7 @@ class Images:
         :return: None
         """
         if not isinstance(key, str) or not key.isidentifier():
-            raise ValueError(f'Invalid image name: {key}')
+            raise ValueError(f"Invalid image name: {key}")
         self._backup[key] = str(value)
         if key in self._attributes:
             super(Images, self).__setattr__(key, value)
@@ -82,10 +82,10 @@ class Images:
         """
         self._base = base
         if not isinstance(theme, Enum):
-            raise TypeError(f'Theme must be an instance of Enum, got {type(theme)}')
+            raise TypeError(f"Theme must be an instance of Enum, got {type(theme)}")
         self._theme = theme
         if not isinstance(default, Enum):
-            raise TypeError(f'Default must be an instance of Enum, got {type(default)}')
+            raise TypeError(f"Default must be an instance of Enum, got {type(default)}")
         self._default = default
 
         for key, value in kwargs.items():
@@ -99,12 +99,12 @@ class Images:
         :raises FileNotFoundError: If the image file does not exist in the specified themes.
         :return: str - The path to the image.
         """
-        if item == '_attributes':
+        if item == "_attributes":
             return super(Images, self).__getattribute__(item)
         if item in self._attributes:
             return super(Images, self).__getattribute__(item)
         if item not in self._backup:
-            raise AttributeError(f'{item} is not defined in the images')
+            raise AttributeError(f"{item} is not defined in the images")
         return self.getImage(item)
 
     def setBase(self, base: str) -> None:
@@ -130,7 +130,7 @@ class Images:
         :return: None
         """
         if not isinstance(theme, Enum):
-            raise TypeError(f'Theme must be an instance of Enum, got {type(theme)}')
+            raise TypeError(f"Theme must be an instance of Enum, got {type(theme)}")
         self._theme = theme
 
     def getTheme(self) -> Enum:
@@ -148,7 +148,7 @@ class Images:
         :return: None
         """
         if not isinstance(default, Enum):
-            raise TypeError(f'Default must be an instance of Enum, got {type(default)}')
+            raise TypeError(f"Default must be an instance of Enum, got {type(default)}")
         self._default = default
 
     def getDefaultTheme(self) -> Enum:
@@ -170,4 +170,4 @@ class Images:
             return os.path.join(self._base, self._theme.value, self._backup[name])
         if os.path.exists(os.path.join(self._base, self._default.value.lower(), self._backup[name])):
             return os.path.join(self._base, self._default.value, self._backup[name])
-        raise FileNotFoundError(f'Image {name} not found in theme {self._theme.value} or default {self._default.value}')
+        raise FileNotFoundError(f"Image {name} not found in theme {self._theme.value} or default {self._default.value}")

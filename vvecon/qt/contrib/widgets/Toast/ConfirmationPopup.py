@@ -14,9 +14,10 @@ from vvecon.qt.contrib.widgets import Margin, Padding
 from vvecon.qt.contrib.widgets.QButton import Button
 from vvecon.qt.res import Icons
 from vvecon.qt.util import ui
+
 from .ToastStyleScheme import ToastStyleScheme
 
-__all__ = ['ConfirmationPopup']
+__all__ = ["ConfirmationPopup"]
 
 
 class ConfirmationPopup(QDialog):
@@ -30,11 +31,11 @@ class ConfirmationPopup(QDialog):
 	def __init__(
 		self,
 		parent=None,
-		title: str = 'Are you sure?',
-		msg: str = 'Do you want to proceed?',
+		title: str = "Are you sure?",
+		msg: str = "Do you want to proceed?",
 		img: QPixmap = Icons.error.pixmap(84, 84),
-		confirmText: str = 'Proceed',
-		cancelText: str = 'Cancel',
+		confirmText: str = "Proceed",
+		cancelText: str = "Cancel",
 		styleScheme: ToastStyleScheme = ToastStyleScheme(),
 		margin: Margin = Margin(vertical=ui.dp(40), horizontal=ui.dp(80))
 	):
@@ -132,11 +133,11 @@ class ConfirmationPopup(QDialog):
 		return self.response
 
 	def showOverlay(self):
-		if self.parent and hasattr(self.parent, 'showSpinner'):
+		if self.parent and hasattr(self.parent, "showSpinner"):
 			self.parent.showSpinner()
 
 	def hideOverlay(self):
-		if self.parent and hasattr(self.parent, 'hideSpinner'):
+		if self.parent and hasattr(self.parent, "hideSpinner"):
 			self.parent.hideSpinner()
 
 	def destroy(self, **kwargs):

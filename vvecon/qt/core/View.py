@@ -2,10 +2,10 @@ from typing import Optional, Type
 
 from PyQt6.QtWidgets import QWidget
 
-from .Window import Window
 from ..logger import logger
+from .Window import Window
 
-__all__ = ['View', 'WindowType']
+__all__ = ["View", "WindowType"]
 
 WindowType = Window
 
@@ -32,7 +32,7 @@ class View(QWidget):
         onClose(self) -> bool
     """
     parent: Optional[WindowType]
-    __viewName: str = ''
+    __viewName: str = ""
     _isBusy: bool = False
 
     def __init__(self,
@@ -94,7 +94,7 @@ class View(QWidget):
         """
         return not self._isBusy
 
-    def navigate(self, view: Optional[Type['View']], *args, **kwargs) -> None:
+    def navigate(self, view: Optional[Type["View"]], *args, **kwargs) -> None:
         """
         navigate(self, view: Optional['View'], *args, **kwargs) -> None
         This method is used to navigate to a different view.
@@ -104,9 +104,9 @@ class View(QWidget):
         :return: None
         """
         if not issubclass(view, View):
-            logger.error(f'View {view} is not an instance of View')
-            raise TypeError(f'View {view} is not an instance of View')
+            logger.error(f"View {view} is not an instance of View")
+            raise TypeError(f"View {view} is not an instance of View")
         if not self.parent:
-            logger.error(f'Parent is not set for the view {self.__viewName}')
-            raise ValueError(f'Parent is not set for the view {self.__viewName}')
+            logger.error(f"Parent is not set for the view {self.__viewName}")
+            raise ValueError(f"Parent is not set for the view {self.__viewName}")
         self.parent.navigate(view, *args, **kwargs)

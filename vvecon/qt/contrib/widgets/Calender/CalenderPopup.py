@@ -1,11 +1,11 @@
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtGui import QColor, QPainter, QBrush, QPen
+from PyQt6.QtGui import QBrush, QColor, QPainter, QPen
 from PyQt6.QtWidgets import QCalendarWidget, QToolButton
 
 from vvecon.qt.contrib import styles
 from vvecon.qt.res import Icons
 
-__all__ = ['CalendarPopup']
+__all__ = ["CalendarPopup"]
 
 
 class CalendarPopup(QCalendarWidget):
@@ -16,7 +16,7 @@ class CalendarPopup(QCalendarWidget):
 		self.setHorizontalHeaderFormat(QCalendarWidget.HorizontalHeaderFormat.SingleLetterDayNames)
 
 		text_format = self.weekdayTextFormat(Qt.DayOfWeek.Saturday)
-		text_format.setForeground(QColor('black'))
+		text_format.setForeground(QColor("black"))
 		self.setWeekdayTextFormat(Qt.DayOfWeek.Saturday, text_format)
 		self.setWeekdayTextFormat(Qt.DayOfWeek.Sunday, text_format)
 
@@ -25,10 +25,10 @@ class CalendarPopup(QCalendarWidget):
 		self.customize_navigation_buttons()
 
 	def customize_navigation_buttons(self):
-		prev_month_button = self.findChild(QToolButton, 'qt_calendar_prevmonth')
-		next_month_button = self.findChild(QToolButton, 'qt_calendar_nextmonth')
-		month_year_label = self.findChild(QToolButton, 'qt_calendar_monthbutton')
-		year_label = self.findChild(QToolButton, 'qt_calendar_yearbutton')
+		prev_month_button = self.findChild(QToolButton, "qt_calendar_prevmonth")
+		next_month_button = self.findChild(QToolButton, "qt_calendar_nextmonth")
+		month_year_label = self.findChild(QToolButton, "qt_calendar_monthbutton")
+		year_label = self.findChild(QToolButton, "qt_calendar_yearbutton")
 
 		button_size = QSize(42, 42)
 		if prev_month_button:
@@ -53,8 +53,8 @@ class CalendarPopup(QCalendarWidget):
 				QToolButton.ToolButtonPopupMode.InstantPopup)
 			year_label.setMenu(None)
 
-		prev_month_button.setStyleSheet('margin: 0; padding: 0;')
-		next_month_button.setStyleSheet('margin: 0; padding: 0;')
+		prev_month_button.setStyleSheet("margin: 0; padding: 0;")
+		next_month_button.setStyleSheet("margin: 0; padding: 0;")
 
 	def paintCell(self, painter, rect, date):
 		if date == self.selectedDate():
@@ -72,7 +72,7 @@ class CalendarPopup(QCalendarWidget):
 				6, 4, -6, -4)
 			painter.drawEllipse(ellipse_rect)
 
-			painter.setPen(QColor('white'))
+			painter.setPen(QColor("white"))
 			painter.setFont(
 				self.font())
 

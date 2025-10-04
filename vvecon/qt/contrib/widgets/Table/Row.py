@@ -1,9 +1,8 @@
 from typing import Any, Callable, List, Optional, Type
 
-
 from vvecon.qt.models import ModelAbstract
 
-__all__ = ['Row']
+__all__ = ["Row"]
 
 
 class Row:
@@ -46,8 +45,8 @@ class Row:
 		return row
 
 	def update(self, data: Type[ModelAbstract.T]):
-		if self._data and getattr(self._data, 'id', None) != getattr(data, 'id', NotImplemented):
-			raise ValueError('Data ID does not match')
+		if self._data and getattr(self._data, "id", None) != getattr(data, "id", NotImplemented):
+			raise ValueError("Data ID does not match")
 		self._data = data
 		if self._extractor:
 			extractedData: List = self._extractor(data)

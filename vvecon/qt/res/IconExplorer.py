@@ -1,8 +1,16 @@
-from PyQt6.QtCore import QSize, Qt, QObject, pyqtSignal, QRunnable, QThreadPool
-from PyQt6.QtWidgets import QToolButton, QVBoxLayout, QHBoxLayout, QWidget, QScrollArea, QLineEdit, \
-	QListWidget, QListWidgetItem
-from ..logger import logger
+from PyQt6.QtCore import QObject, QRunnable, QSize, Qt, QThreadPool, pyqtSignal
+from PyQt6.QtWidgets import (
+    QHBoxLayout,
+    QLineEdit,
+    QListWidget,
+    QListWidgetItem,
+    QScrollArea,
+    QToolButton,
+    QVBoxLayout,
+    QWidget,
+)
 
+from ..logger import logger
 from .Icons import Icons, SystemIcon
 
 
@@ -119,16 +127,16 @@ class IconsExplorer(QWidget):
         try:
             if normal := getattr(Icons, key):
                 self.display_icon(normal)
-            if normalOutlined := getattr(getattr(Icons, 'Outlined'), key):
+            if normalOutlined := getattr(Icons.Outlined, key):
                 self.display_icon(normalOutlined)
-            if normalRounded := getattr(getattr(Icons, 'Rounded'), key):
+            if normalRounded := getattr(Icons.Rounded, key):
                 self.display_icon(normalRounded)
 
-            if filled := getattr(getattr(Icons, 'Filled'), key):
+            if filled := getattr(Icons.Filled, key):
                 self.display_icon(filled)
-            if filledOutlined := getattr(getattr(getattr(Icons, 'Filled'), 'Outlined'), key):
+            if filledOutlined := getattr(Icons.Filled.Outlined, key):
                 self.display_icon(filledOutlined)
-            if filledRounded := getattr(getattr(getattr(Icons, 'Filled'), 'Rounded'), key):
+            if filledRounded := getattr(Icons.Filled.Rounded, key):
                 self.display_icon(filledRounded)
         except Exception as e:
             logger.error(e)
@@ -141,7 +149,7 @@ class IconsExplorer(QWidget):
             label.setIconSize(QSize(64, 64))
             label.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
             label.setText(icon.toStr())
-            label.setStyleSheet('background-color: transparent; border: none;')
+            label.setStyleSheet("background-color: transparent; border: none;")
             self.scroll_area_layout.addWidget(label)
         except Exception as e:
             logger.error(e)

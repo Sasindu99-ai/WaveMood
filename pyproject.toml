@@ -42,3 +42,9 @@ dependencies = [
     "tensorflow-cpu>=2.20.0",
     "serial>=0.0.97",
 ]
+
+
+[tool.ruff]
+select = ["E", "F", "W", "C90", "B", "B9", "N", "Q", "I"]
+ignore = ["E501", "E203", "F403", "F401", "N802", "N803", "N806", "C901", "N815", "N999", "W191"]
+exclude = ["build", "dist", "vvecon", ".venv", "__pycache__", "tests/testMood.ipynb"]

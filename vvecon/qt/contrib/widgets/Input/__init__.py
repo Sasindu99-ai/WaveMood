@@ -3,4 +3,4 @@ from .StyleScheme import StyleScheme
 
 InputField.StyleScheme = StyleScheme
 
-__all__ = ['InputField']
+__all__ = ["InputField"]

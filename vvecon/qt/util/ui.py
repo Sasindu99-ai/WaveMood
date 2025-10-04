@@ -1,11 +1,11 @@
 import platform
 from typing import Optional
 
-from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QIcon, QPixmap
 from PyQt6.QtWidgets import QSizePolicy
 
-__all__ = ['ui']
+__all__ = ["ui"]
 
 
 class UI:
@@ -42,7 +42,7 @@ class UI:
 
     @property
     def dpiFactor(self) -> float:
-        return self._logicalDpi / (72 if platform.system() == 'Darwin' else 96)
+        return self._logicalDpi / (72 if platform.system() == "Darwin" else 96)
 
     def dp(self, unit: int) -> int:
         return int(unit * self.dpiFactor)
@@ -52,7 +52,7 @@ class UI:
 
     @staticmethod
     def colorHex(color: tuple) -> str:
-        return '#{:02x}{:02x}{:02x}'.format(*color)
+        return "#{:02x}{:02x}{:02x}".format(*color)
 
     @staticmethod
     def sizePolicy(horizontal: QSizePolicy.Policy, vertical: QSizePolicy.Policy) -> QSizePolicy:

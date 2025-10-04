@@ -1,6 +1,6 @@
 from vvecon.qt.util import Style, ui
 
-__all__ = ['calendarPopup', 'monthField', 'yearField']
+__all__ = ["calendarPopup", "monthField", "yearField"]
 
 calendarPopup = Style("""
 QCalendarWidget QAbstractItemView [
@@ -21,8 +21,8 @@ QCalendarWidget QHeaderView {  /* Day names header */
 	background: {backgroundColor};
 }
 """, **dict(
-    foregroundColor='black',
-    backgroundColor='#F5F5F5',
+    foregroundColor="black",
+    backgroundColor="#F5F5F5",
     fontSize=ui.sp(16)
 ))
 

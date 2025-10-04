@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-__all__ = ['Header']
+__all__ = ["Header"]
 
 from vvecon.qt.enums import SizeType
 

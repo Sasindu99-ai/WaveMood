@@ -1,7 +1,7 @@
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import QScrollArea
 
-__all__ = ['ScrollArea']
+__all__ = ["ScrollArea"]
 
 
 class ScrollArea(QScrollArea):

@@ -1,6 +1,6 @@
 from vvecon.qt.util import Style
 
-__all__ = ['menu']
+__all__ = ["menu"]
 
 menu = Style("""
 QMenu [

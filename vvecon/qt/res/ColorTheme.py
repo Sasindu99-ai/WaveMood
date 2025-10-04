@@ -1,6 +1,6 @@
 from PyQt6.QtGui import QColor
 
-__all__ = ['ColorTheme']
+__all__ = ["ColorTheme"]
 
 
 class ColorTheme:
@@ -27,9 +27,9 @@ class ColorTheme:
 
     def __setattr__(self, key, value):
         if not key.isidentifier():
-            raise ValueError(f'Invalid attribute name: {key}')
+            raise ValueError(f"Invalid attribute name: {key}")
         if not isinstance(value, str) or not QColor(value).isValid():
-            raise ValueError(f'Invalid color value for {key}')
+            raise ValueError(f"Invalid color value for {key}")
         super().__setattr__(key, QColor(value))
 
     def __getattr__(self, item):
@@ -60,7 +60,7 @@ class ColorTheme:
         :return: QColor
         """
         if not name.isidentifier():
-            raise ValueError('Invalid name')
+            raise ValueError("Invalid name")
         if not hasattr(self, name):
-            raise AttributeError('Color is not defined in the theme')
+            raise AttributeError("Color is not defined in the theme")
         return getattr(self, name)

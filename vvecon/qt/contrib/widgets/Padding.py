@@ -1,6 +1,6 @@
 from PyQt6.QtCore import QMargins
 
-__all__ = ['Padding']
+__all__ = ["Padding"]
 
 
 class Padding(QMargins):
@@ -28,16 +28,16 @@ class Padding(QMargins):
 			left, top, right, bottom = __args
 		elif 0 < len(__kwargs.keys()) <= 2:
 			horizontal = __kwargs[
-				'horizontal'] if 'horizontal' in __kwargs.keys() else 0
-			vertical = __kwargs['vertical'] if 'vertical' in __kwargs.keys(
+				"horizontal"] if "horizontal" in __kwargs.keys() else 0
+			vertical = __kwargs["vertical"] if "vertical" in __kwargs.keys(
 			) else 0
 			left, right = horizontal, horizontal
 			top, bottom = vertical, vertical
 		else:
-			left = __kwargs['left'] if 'left' in __kwargs.keys() else 0
-			top = __kwargs['top'] if 'top' in __kwargs.keys() else 0
-			right = __kwargs['right'] if 'right' in __kwargs.keys() else 0
-			bottom = __kwargs['bottom'] if 'bottom' in __kwargs.keys() else 0
+			left = __kwargs["left"] if "left" in __kwargs.keys() else 0
+			top = __kwargs["top"] if "top" in __kwargs.keys() else 0
+			right = __kwargs["right"] if "right" in __kwargs.keys() else 0
+			bottom = __kwargs["bottom"] if "bottom" in __kwargs.keys() else 0
 
 		self.setLeft(left)
 		self.setTop(top)
@@ -47,12 +47,12 @@ class Padding(QMargins):
 	@property
 	def qss(self):
 		if self.totalHorizontal() == 0 and self.totalVertical() == 0:
-			return '0'
-		return f'{self.toPx(self.top())} {self.toPx(self.right())} {self.toPx(self.bottom())} {self.toPx(self.left())}'
+			return "0"
+		return f"{self.toPx(self.top())} {self.toPx(self.right())} {self.toPx(self.bottom())} {self.toPx(self.left())}"
 
 	@staticmethod
 	def toPx(value) -> str:
-		return f'{value}px' if value != 0 else '0'
+		return f"{value}px" if value != 0 else "0"
 
 	def totalHorizontal(self):
 		return self.left() + self.right()

@@ -1,14 +1,14 @@
 import os
-import numpy as np
-import librosa
-import joblib
-from tensorflow.keras.models import load_model
-from sklearn.neighbors import KNeighborsClassifier
-import sounddevice as sd
-from scipy.io.wavfile import write, read
-import warnings
-import serial
 import time
+import warnings
+
+import joblib
+import librosa
+import numpy as np
+import serial
+import sounddevice as sd
+from scipy.io.wavfile import read, write
+from tensorflow.keras.models import load_model
 
 warnings.filterwarnings("ignore")  # cleaner output
 

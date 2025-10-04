@@ -1,8 +1,8 @@
 from enum import Enum
 
-__all__ = ['TopBarMode']
+__all__ = ["TopBarMode"]
 
 
 class TopBarMode(Enum):
-    EMPTY = 'Empty'
-    BACK = 'Back'
+    EMPTY = "Empty"
+    BACK = "Back"

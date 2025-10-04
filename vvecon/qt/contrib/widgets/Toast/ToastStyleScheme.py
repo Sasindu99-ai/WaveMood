@@ -10,15 +10,15 @@ from vvecon.qt.contrib.styles.Common import h4, h6
 from vvecon.qt.util import Style, StyleSheet
 
 __all__ = [
-	'ToastStyleScheme', 'primaryToastStyleSheet', 'darkToastStyleSheet', 'warningToastStyleSheet',
-	'dangerToastStyleSheet', 'successToastStyleSheet'
+	"ToastStyleScheme", "primaryToastStyleSheet", "darkToastStyleSheet", "warningToastStyleSheet",
+	"dangerToastStyleSheet", "successToastStyleSheet"
 ]
 
 
 class ToastStyleScheme(StyleSheet):
 	background: Style = Style("""
 	background-color: {backgroundColor}; border-radius: {borderRadius}px;
-	""", **dict(backgroundColor='#242424', borderRadius=8))
+	""", **dict(backgroundColor="#242424", borderRadius=8))
 	title: Style = h4
 	message: Style = h6
 	confirmButton: Style = primaryButton

@@ -3,7 +3,7 @@ from typing import List
 from ..enums import EnvMode
 from .Env import Env
 
-__all__ = ['EnvManager']
+__all__ = ["EnvManager"]
 
 
 class EnvManager:
@@ -16,7 +16,7 @@ class EnvManager:
 	@classmethod
 	def get_env(cls) -> Env:
 		if cls._env is None:
-			raise ValueError('Environment not set')
+			raise ValueError("Environment not set")
 		return cls._env
 
 	@classmethod

@@ -1,10 +1,9 @@
 from datetime import datetime
 from typing import Optional
 
-
 from .ModelAbstract import ModelAbstract
 
-__all__ = ['Model']
+__all__ = ["Model"]
 
 
 class Model(ModelAbstract):

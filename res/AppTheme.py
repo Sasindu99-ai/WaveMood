@@ -1,7 +1,8 @@
-from enums import Theme, Locale
-from vvecon.qt.res import Theme as ThemeMeta, ColorTheme, Images, LocaleBuilder
+from enums import Locale, Theme
+from vvecon.qt.res import ColorTheme, Images, LocaleBuilder
+from vvecon.qt.res import Theme as ThemeMeta
 
-__all__ = ['AppTheme']
+__all__ = ["AppTheme"]
 
 
 class AppTheme(ThemeMeta):
@@ -14,7 +15,7 @@ class AppTheme(ThemeMeta):
             text="#212121",
             accent="#03A9F4",
             error="#F44336",
-            warning='#FF9800',
+            warning="#FF9800",
         ),
         Theme.DARK: ColorTheme(
             primary="#4CAF50",
@@ -23,7 +24,7 @@ class AppTheme(ThemeMeta):
             text="#E0E0E0",
             accent="#03A9F4",
             error="#F44336",
-            warning='#FF9800',
+            warning="#FF9800",
         ),
     }
     colors = colorPalette[colorTheme]
@@ -32,10 +33,10 @@ class AppTheme(ThemeMeta):
     images = Images(
         theme=Theme.LIGHT,
         default=Theme.LIGHT,
-        logo='wavemood.jpg',
-        mlp='mlp.png',
-        knn='knn.png',
-        recording='recording.gif',
+        logo="wavemood.jpg",
+        mlp="mlp.png",
+        knn="knn.png",
+        recording="recording.gif",
     )
 
     locale = LocaleBuilder(locale= Locale.enUS, default=Locale.enUS)

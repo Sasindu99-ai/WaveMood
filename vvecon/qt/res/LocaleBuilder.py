@@ -3,7 +3,7 @@ import os
 from enum import Enum
 from typing import Dict
 
-__all__ = ['LocaleBuilder']
+__all__ = ["LocaleBuilder"]
 
 
 class LocaleBuilder:
@@ -53,14 +53,14 @@ class LocaleBuilder:
     >>> localeBuilder = LocaleBuilder(locale=Locale.siLK, default=Locale.enUS)
     >>> print(localeBuilder.hello_world)  # Example usage, assuming 'hello_world' is defined in the locale JSON files
     """
-    _base: str = 'res/locale'
+    _base: str = "res/locale"
     _locale: Enum = NotImplemented
     _default: Enum = NotImplemented
     _json: Dict = dict()
     _defaultJson: Dict = dict()
     _attributes = (
-        '_base', '_locale', '_json', '_default', '_defaultJson', 'setLocale', 'getLocale', 'setDefaultLocale',
-        'getDefaultLocale', 'get', 'setBase', 'getBase'
+        "_base", "_locale", "_json", "_default", "_defaultJson", "setLocale", "getLocale", "setDefaultLocale",
+        "getDefaultLocale", "get", "setBase", "getBase"
     )
 
     def __init__(self, base: str = _base, locale: Enum = NotImplemented, default: Enum = NotImplemented) -> None:
@@ -74,10 +74,10 @@ class LocaleBuilder:
         :return: None
         """
         if not isinstance(locale, Enum):
-            raise TypeError(f'Locale must be an instance of Enum, got {type(locale)}')
+            raise TypeError(f"Locale must be an instance of Enum, got {type(locale)}")
         self._locale = locale
         if not isinstance(default, Enum):
-            raise TypeError(f'Default must be an instance of Enum, got {type(default)}')
+            raise TypeError(f"Default must be an instance of Enum, got {type(default)}")
         self._default = default
         self.setBase(base)
 
@@ -89,7 +89,7 @@ class LocaleBuilder:
         :return: None
         """
         if not os.path.exists(base):
-            raise FileNotFoundError(f'Base directory {base} does not exist')
+            raise FileNotFoundError(f"Base directory {base} does not exist")
         self._base = base
         self.setLocale(self._locale)
         self.setDefaultLocale(self._default)
@@ -110,12 +110,12 @@ class LocaleBuilder:
         :return: None
         """
         self._locale = locale
-        localePath = f'{self._base}/{self._locale.name}.json'
+        localePath = f"{self._base}/{self._locale.name}.json"
 
         if not os.path.exists(localePath):
-            raise FileNotFoundError(f'{localePath} not found')
+            raise FileNotFoundError(f"{localePath} not found")
 
-        with open(localePath, 'r') as file:
+        with open(localePath, "r") as file:
             self._json = json.load(file)
 
     def getLocale(self) -> Enum:
@@ -134,12 +134,12 @@ class LocaleBuilder:
         :return: None
         """
         self._default = default
-        defaultPath = f'{self._base}/{self._default.name}.json'
+        defaultPath = f"{self._base}/{self._default.name}.json"
 
         if not os.path.exists(defaultPath):
-            raise FileNotFoundError(f'{defaultPath} not found')
+            raise FileNotFoundError(f"{defaultPath} not found")
 
-        with open(defaultPath, 'r') as file:
+        with open(defaultPath, "r") as file:
             self._defaultJson = json.load(file)
 
     def getDefaultLocale(self) -> Enum:
@@ -165,7 +165,7 @@ class LocaleBuilder:
         :raises AttributeError: If the requested attribute is not defined in the locale JSON files.
         :return: str - Value of the attribute or string from the current or default locale.
         """
-        if item == '_attributes':
+        if item == "_attributes":
             return super(LocaleBuilder, self).__getattribute__(item)
         if item in self._attributes:
             return super(LocaleBuilder, self).__getattribute__(item)
@@ -173,4 +173,4 @@ class LocaleBuilder:
             return self._json[item]
         if item in self._defaultJson:
             return self._defaultJson[item]
-        raise AttributeError(f'{item} is not defined in the locale')
+        raise AttributeError(f"{item} is not defined in the locale")

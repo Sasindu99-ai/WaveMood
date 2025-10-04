@@ -38,10 +38,10 @@ QLabel [
 	fontFamily="'Inter'",
 	fontWeight=FontWeight.Bold,
 	fontSize=36,
-	border='none',
-	color='white',
+	border="none",
+	color="white",
 	margin=Margin(0, 0, 0, 20).qss,
-	backgroundColor='transparent'
+	backgroundColor="transparent"
 ))
 
 h2 = h1.update(

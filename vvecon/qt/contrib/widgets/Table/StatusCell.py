@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import QLabel
 
 from .BaseCell import BaseCell
 
-__all__ = ['StatusCell']
+__all__ = ["StatusCell"]
 
 
 class StatusCell(BaseCell):
@@ -14,13 +14,13 @@ class StatusCell(BaseCell):
 	_height: int = 30
 
 	def __init__(self, *args, **kwargs):
-		self._width = kwargs.get('width', self._width)
-		self._height = kwargs.get('height', self._height)
+		self._width = kwargs.get("width", self._width)
+		self._height = kwargs.get("height", self._height)
 
 		super(StatusCell, self).__init__(*args, **kwargs)
 
 	def setupCell(self):
-		self.label = QLabel('Test')
+		self.label = QLabel("Test")
 		self.label.setFixedHeight(30)
 		self.label.setContentsMargins(20, 5, 20, 5)
 		self.layout.addWidget(self.label, alignment=Qt.AlignmentFlag.AlignCenter)
@@ -36,11 +36,11 @@ class StatusCell(BaseCell):
 
 	@staticmethod
 	def getColor(status):
-		if status == 'pending':
-			return '#5D5D5D'
-		elif status == 'approved':
-			return '#13AE82'
-		elif status == 'confirmed':
-			return '#FFCC00'
+		if status == "pending":
+			return "#5D5D5D"
+		elif status == "approved":
+			return "#13AE82"
+		elif status == "confirmed":
+			return "#FFCC00"
 		else:
-			return '#3D6AFF'
+			return "#3D6AFF"

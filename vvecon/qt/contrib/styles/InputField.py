@@ -7,7 +7,7 @@ color: {color};
 padding: {padding};
 """, **dict(
 	fontSize=12,
-	color='white',
+	color="white",
 	padding=Padding(3, 0, 0, 0).qss
 ))
 
@@ -16,17 +16,17 @@ background-color: {backgroundColor};
 border-radius: {borderRadius}px;
 border: {border};
 """, **dict(
-	backgroundColor='#B6B6B6',
+	backgroundColor="#B6B6B6",
 	borderRadius=4,
-	border='none'
+	border="none"
 ))
 
 searchContainer = container.update(**dict(
-	backgroundColor='#B6B6B6',
+	backgroundColor="#B6B6B6",
 ))
 
 pinkContainer = container.update(**dict(
-	backgroundColor='#F9CFC2',
+	backgroundColor="#F9CFC2",
 ))
 
 lineEdit = Style("""
@@ -36,17 +36,17 @@ border: {border};
 color: {color};
 """, **dict(
 	fontSize=13,
-	backgroundColor='transparent',
-	border='none',
-	color='black'
+	backgroundColor="transparent",
+	border="none",
+	color="black"
 ))
 
 errorContainer = container.update(**dict(
-	border='1px solid #C74343'
+	border="1px solid #C74343"
 ))
 
 successContainer = container.update(**dict(
-	border='1px solid #198754'
+	border="1px solid #198754"
 ))
 
 bottomLabel = Style("""
@@ -54,15 +54,15 @@ font-size: {fontSize}px;
 color: {color};
 """, **dict(
 	fontSize=12,
-	color='#4B4B4B'
+	color="#4B4B4B"
 ))
 
 errorBottomLabel = bottomLabel.update(**dict(
-	color='#C74343'
+	color="#C74343"
 ))
 
 successBottomLabel = bottomLabel.update(**dict(
-	color='#198754'
+	color="#198754"
 ))
 
 lightInputField = dict(
@@ -72,7 +72,7 @@ lightInputField = dict(
 	padding: {padding};
 	""", **dict(
 		fontSize=12,
-		color='black',
+		color="black",
 		padding=Padding(3, 0, 0, 0).qss
 	)),
 
@@ -81,14 +81,14 @@ lightInputField = dict(
 	border-radius: {borderRadius}px;
 	border: {border};
 	""", **dict(
-		backgroundColor='#f9f9f9',
+		backgroundColor="#f9f9f9",
 		borderRadius=4,
-		border='1px solid #CACACA'
+		border="1px solid #CACACA"
 	)),
 
 	searchContainer = container.update(**dict(
-		backgroundColor='#ffffff',
-		border='1px solid #AEAEAE'
+		backgroundColor="#ffffff",
+		border="1px solid #AEAEAE"
 	)),
 
 	lineEdit = Style("""
@@ -97,16 +97,16 @@ lightInputField = dict(
 	border: {border};
 	""", **dict(
 		fontSize=16,
-		backgroundColor='transparent',
-		border='none'
+		backgroundColor="transparent",
+		border="none"
 	)),
 
 	errorContainer = container.update(**dict(
-		border='1px solid #C74343'
+		border="1px solid #C74343"
 	)),
 
 	successContainer = container.update(**dict(
-		border='1px solid #198754'
+		border="1px solid #198754"
 	)),
 
 	bottomLabel = Style("""
@@ -114,14 +114,14 @@ lightInputField = dict(
 	color: {color};
 	""", **dict(
 		fontSize=12,
-		color='#4B4B4B'
+		color="#4B4B4B"
 	)),
 
 	errorBottomLabel = bottomLabel.update(**dict(
-		color='#C74343'
+		color="#C74343"
 	)),
 
 	successBottomLabel = bottomLabel.update(**dict(
-		color='#198754'
+		color="#198754"
 	)),
 )

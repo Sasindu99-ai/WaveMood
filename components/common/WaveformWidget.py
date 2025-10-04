@@ -1,10 +1,10 @@
 import numpy as np
-import soundfile as sf
 import pyqtgraph as pg
-from PyQt6.QtGui import QFont
+import soundfile as sf
 from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.QtGui import QFont
 
-__all__ = ['WaveformWidget']
+__all__ = ["WaveformWidget"]
 
 
 class WaveformWidget(pg.PlotWidget):
@@ -28,7 +28,7 @@ class WaveformWidget(pg.PlotWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setBackground('#23272F')
+        self.setBackground("#23272F")
         self.showGrid(x=True, y=False, alpha=0.3)
         self.setMenuEnabled(False)
         self.setMouseEnabled(x=True, y=False)
@@ -37,9 +37,9 @@ class WaveformWidget(pg.PlotWidget):
 
         font = QFont()
         font.setPointSize(8)
-        self.getAxis('bottom').setTickFont(font)
-        self.getAxis('bottom').setLabel('Time (seconds)', color='#CCCCCC')
-        self.getAxis('left').hide()
+        self.getAxis("bottom").setTickFont(font)
+        self.getAxis("bottom").setLabel("Time (seconds)", color="#CCCCCC")
+        self.getAxis("left").hide()
 
         # Initialize variables
         self.waveform_plot = None
@@ -49,7 +49,7 @@ class WaveformWidget(pg.PlotWidget):
         self.duration = 0
 
         # Status display for loading
-        self.loading_text = pg.TextItem("Loading waveform...", color='#CCCCCC', anchor=(0.5, 0.5))
+        self.loading_text = pg.TextItem("Loading waveform...", color="#CCCCCC", anchor=(0.5, 0.5))
         self.loading_text.setPos(0.5, 0)
         self.addItem(self.loading_text)
         self.loading_text.hide()
@@ -58,7 +58,7 @@ class WaveformWidget(pg.PlotWidget):
         self.position_line = pg.InfiniteLine(
             pos=0,
             angle=90,
-            pen=pg.mkPen(color='#E95525', width=2),
+            pen=pg.mkPen(color="#E95525", width=2),
             movable=False
         )
         self.addItem(self.position_line)
@@ -101,7 +101,7 @@ class WaveformWidget(pg.PlotWidget):
 
         if not success:
             # Show error message
-            error_text = pg.TextItem(f"Error: {error_msg}", color='#E95525', anchor=(0.5, 0.5))
+            error_text = pg.TextItem(f"Error: {error_msg}", color="#E95525", anchor=(0.5, 0.5))
             error_text.setPos(0.5, 0)
             self.addItem(error_text)
             return
@@ -119,7 +119,7 @@ class WaveformWidget(pg.PlotWidget):
         self.waveform_plot = self.plot(
             time_points,
             audio_data,
-            pen=pg.mkPen(color='#E95525', width=1.5)
+            pen=pg.mkPen(color="#E95525", width=1.5)
         )
 
         # Set axis range and labels

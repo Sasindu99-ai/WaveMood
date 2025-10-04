@@ -1,4 +1,4 @@
-from .WaveformWidget import WaveformWidget
 from .VuMeterWidget import VuMeterWidget
+from .WaveformWidget import WaveformWidget
 
-__all__ = ['WaveformWidget', 'VuMeterWidget']
+__all__ = ["WaveformWidget", "VuMeterWidget"]

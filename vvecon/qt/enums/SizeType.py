@@ -1,6 +1,6 @@
 from enum import Enum
 
-__all__ = ['SizeType']
+__all__ = ["SizeType"]
 
 
 class SizeType(Enum):

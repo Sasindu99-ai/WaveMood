@@ -3,31 +3,32 @@ import logging
 import os
 import sys
 
-from env import env
 from PyQt6.QtCore import QCoreApplication, Qt
 from PyQt6.QtGui import QFont, QFontDatabase
 from PyQt6.QtWidgets import QApplication
 
+from env import env
+
 env.init()
 
 QCoreApplication.setAttribute(Qt.ApplicationAttribute.AA_ShareOpenGLContexts)
-logging.getLogger('urllib3').setLevel(logging.DEBUG)
+logging.getLogger("urllib3").setLevel(logging.DEBUG)
 faulthandler.enable()
 
-if getattr(sys, 'frozen', False):
+if getattr(sys, "frozen", False):
 	ROOTPATH = os.path.dirname(sys.executable)
 else:
-	ROOTPATH = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+	ROOTPATH = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
 os.chdir(ROOTPATH)
-os.environ.setdefault('BASE_PATH', ROOTPATH)
-os.environ.setdefault('APP_NAME', 'WaveMood')
+os.environ.setdefault("BASE_PATH", ROOTPATH)
+os.environ.setdefault("APP_NAME", "WaveMood")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	app = QApplication(sys.argv)
 	# ic.disable()
-	QFontDatabase.addApplicationFont('res/fonts/Inter.ttf')
-	app.setFont(QFont('Inter', 9))
+	QFontDatabase.addApplicationFont("res/fonts/Inter.ttf")
+	app.setFont(QFont("Inter", 9))
 
 	from vvecon.qt.res import Icons
 	app.setWindowIcon(Icons.settings_applications)

@@ -1,12 +1,12 @@
 from typing import Optional
 
-from PyQt6.QtWidgets import QVBoxLayout, QWidget, QFrame
+from PyQt6.QtWidgets import QFrame, QVBoxLayout, QWidget
 
 from vvecon.qt.contrib.styles.Card import primaryCard
 from vvecon.qt.contrib.widgets import Margin
 from vvecon.qt.util import Style
 
-__all__ = ['Card']
+__all__ = ["Card"]
 
 
 class Card(QFrame):

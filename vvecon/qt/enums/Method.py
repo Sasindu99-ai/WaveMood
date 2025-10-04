@@ -1,10 +1,10 @@
 import enum
 
-__all__ = ['Method']
+__all__ = ["Method"]
 
 
 class Method(enum.Enum):
-    GET = 'GET'
-    POST = 'POST'
-    PUT = 'PUT'
-    DELETE = 'DELETE'
+    GET = "GET"
+    POST = "POST"
+    PUT = "PUT"
+    DELETE = "DELETE"

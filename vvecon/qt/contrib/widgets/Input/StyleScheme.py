@@ -4,7 +4,7 @@ from typing import Optional
 from vvecon.qt.contrib.styles import InputField
 from vvecon.qt.util import Style
 
-__all__ = ['StyleScheme']
+__all__ = ["StyleScheme"]
 
 
 @dataclass

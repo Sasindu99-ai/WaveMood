@@ -9,7 +9,7 @@ from vvecon.qt.enums import SizeType
 from .Header import Header
 from .Row import Row
 
-__all__ = ['TableWidget']
+__all__ = ["TableWidget"]
 
 
 class TableWidget(QTableWidget):
@@ -20,9 +20,9 @@ class TableWidget(QTableWidget):
 	rowSelected = pyqtSignal(object)
 
 	scrolled = pyqtSignal()
-	_primaryField: str = 'id'
+	_primaryField: str = "id"
 
-	def __init__(self, parent=None, headers: Optional[List[Header]] = None, primaryField: str = 'id'):
+	def __init__(self, parent=None, headers: Optional[List[Header]] = None, primaryField: str = "id"):
 		super(TableWidget, self).__init__(parent)
 
 		if headers is None:

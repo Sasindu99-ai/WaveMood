@@ -14,7 +14,7 @@ from ..logger import logger
 from ..signals import window
 from ..util import ui
 
-__all__ = ['Window']
+__all__ = ["Window"]
 
 
 class Window(QMainWindow):
@@ -51,7 +51,7 @@ class Window(QMainWindow):
             onTabChanged(self, tab: str) -> None
             removeCurrentView(self) -> None
 		"""
-        super(QMainWindow,self).__init__(__kwargs.get('parent'))
+        super(QMainWindow,self).__init__(__kwargs.get("parent"))
 
         ui.setLogicalDpi(self.screen().logicalDotsPerInch())
 
@@ -63,11 +63,11 @@ class Window(QMainWindow):
         self.mainWidget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
         self.centralWidget = QStackedWidget()
-        row = __kwargs.get('row') or 1
-        column = __kwargs.get('column') or 1
-        row_span = __kwargs.get('rowSpan') or 1
-        column_span = __kwargs.get('columnSpan') or 1
-        alignment = __kwargs.get('alignment', Qt.AlignmentFlag.AlignCenter)
+        row = __kwargs.get("row") or 1
+        column = __kwargs.get("column") or 1
+        row_span = __kwargs.get("rowSpan") or 1
+        column_span = __kwargs.get("columnSpan") or 1
+        alignment = __kwargs.get("alignment", Qt.AlignmentFlag.AlignCenter)
         self.mainLayout.addWidget(self.centralWidget, row, column, row_span, column_span, alignment)
 
         self.setCentralWidget(self.mainWidget)
@@ -91,7 +91,7 @@ class Window(QMainWindow):
             self.centralWidget.addWidget(self._PAGES[view])
         self.centralWidget.setCurrentWidget(self._PAGES[view])
         self.navigationHistory.append(self._PAGES[view].__class__)
-        logger.debug(f'Navigated to {view.__name__}, resume: {resume}')
+        logger.debug(f"Navigated to {view.__name__}, resume: {resume}")
         if resume:
             self._PAGES[view].onResume(*args, **kwargs)
         if not resume:
@@ -103,14 +103,14 @@ class Window(QMainWindow):
         navigateBack method for navigating back
         :return: None
         """
-        logger.debug(f'navigation history {self.navigationHistory}')
+        logger.debug(f"navigation history {self.navigationHistory}")
         if len(self.navigationHistory) > 1:
             self.navigationHistory.pop()
             lastView = self.navigationHistory[-1]
-            logger.debug(f'last view {lastView}')
+            logger.debug(f"last view {lastView}")
             self.navigate(lastView)
         else:
-            logger.warning('No more views to navigate back to.')
+            logger.warning("No more views to navigate back to.")
 
     def getViews(self) -> Dict[QWidget, Type[QWidget]]:
         """
@@ -126,13 +126,13 @@ class Window(QMainWindow):
         :return: None
         """
         try:
-            if hasattr(self._PAGES[view.__class__], 'onDestroy') and self._PAGES[view.__class__].onDestroy():
+            if hasattr(self._PAGES[view.__class__], "onDestroy") and self._PAGES[view.__class__].onDestroy():
                 window.tabRemoved.emit(self._PAGES[view.__class__])
                 self.mainLayout.removeWidget(self._PAGES[view.__class__])
                 self._PAGES[view.__class__].deleteLater()
                 del self._PAGES[view.__class__]
         except KeyError as e:
-            logger.error(f'Remove View Error: {e}')
+            logger.error(f"Remove View Error: {e}")
 
     @pyqtSlot(str)
     def onTabChanged(self, tab: str) -> None:

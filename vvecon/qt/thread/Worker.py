@@ -1,7 +1,8 @@
 from typing import Callable, Dict
 from uuid import uuid4
 
-from PyQt6.QtCore import QRunnable, QObject, pyqtSignal, QTimer
+from PyQt6.QtCore import QObject, QRunnable, QTimer, pyqtSignal
+
 from vvecon.qt.logger import logger
 
 

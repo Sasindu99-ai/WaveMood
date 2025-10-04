@@ -10,18 +10,26 @@ import numpy as np
 import serial
 import sounddevice as sd
 import soundfile as sf
-from PyQt6.QtCore import QTimer, Qt
+from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtWidgets import (
-    QHBoxLayout, QFrame, QSizePolicy, QFileDialog, QVBoxLayout, QSpacerItem, QWidget, QProgressBar, QCheckBox,
-    QMessageBox
+    QCheckBox,
+    QFileDialog,
+    QFrame,
+    QHBoxLayout,
+    QMessageBox,
+    QProgressBar,
+    QSizePolicy,
+    QSpacerItem,
+    QVBoxLayout,
+    QWidget,
 )
 
-from components.common import WaveformWidget, VuMeterWidget
-from enums import TopBarMode, Model
+from components.common import VuMeterWidget, WaveformWidget
+from enums import Model, TopBarMode
 from res import AppTheme
 from vvecon.qt.contrib.styles.Button import primaryButton, secondaryButton
 from vvecon.qt.contrib.styles.Label import label
-from vvecon.qt.contrib.widgets import Margin, Button
+from vvecon.qt.contrib.widgets import Button, Margin
 from vvecon.qt.contrib.widgets.AnimatedGifLabel import AnimatedGifLabel
 from vvecon.qt.contrib.widgets.Input import InputField
 from vvecon.qt.contrib.widgets.QLabel import Label
@@ -41,7 +49,7 @@ except Exception as e:
     load_model = None
     _tensorflow_available = False
 
-__all__ = ['HomeView']
+__all__ = ["HomeView"]
 
 
 class HomeView(View):
@@ -51,20 +59,20 @@ class HomeView(View):
 
     # Predefined emotion list with emoji, pretty names, and color for the progress bar
     _emotion_list = [
-        {'key': 'calm',     'emoji': '😌', 'label': 'Calm',     'color': '#4FC3F7'},
-        {'key': 'excited',  'emoji': '🤩', 'label': 'Excited',  'color': '#FFD600'},
-        {'key': 'neutral',  'emoji': '😐', 'label': 'Neutral',  'color': '#B0BEC5'},
-        {'key': 'happy',    'emoji': '😊', 'label': 'Happy',    'color': '#81C784'},
-        {'key': 'sad',      'emoji': '😢', 'label': 'Sad',      'color': '#90A4AE'},
-        {'key': 'angry',    'emoji': '😠', 'label': 'Angry',    'color': '#E57373'},
-        {'key': 'fear',     'emoji': '😱', 'label': 'Fear',     'color': '#9575CD'},
-        {'key': 'surprise', 'emoji': '😮', 'label': 'Surprise', 'color': '#FFB74D'},
+        {"key": "calm",     "emoji": "😌", "label": "Calm",     "color": "#4FC3F7"},
+        {"key": "excited",  "emoji": "🤩", "label": "Excited",  "color": "#FFD600"},
+        {"key": "neutral",  "emoji": "😐", "label": "Neutral",  "color": "#B0BEC5"},
+        {"key": "happy",    "emoji": "😊", "label": "Happy",    "color": "#81C784"},
+        {"key": "sad",      "emoji": "😢", "label": "Sad",      "color": "#90A4AE"},
+        {"key": "angry",    "emoji": "😠", "label": "Angry",    "color": "#E57373"},
+        {"key": "fear",     "emoji": "😱", "label": "Fear",     "color": "#9575CD"},
+        {"key": "surprise", "emoji": "😮", "label": "Surprise", "color": "#FFB74D"},
         # ...add more if needed...
     ]
 
     def __init__(self, parent: Optional[WindowType] = None):
-        super(HomeView, self).__init__(parent, 'Home')
-        self.setObjectName('HomeView')
+        super(HomeView, self).__init__(parent, "Home")
+        self.setObjectName("HomeView")
 
         self.layout = QHBoxLayout(self)
         self.layout.setAlignment(Qt.AlignmentFlag.AlignLeading)
@@ -93,9 +101,9 @@ class HomeView(View):
         self.modelLayout.setSpacing(ui.dp(12))
 
         # Model section header
-        self.modelLabel = Label('Select Model', parent=self.modelFrame)
+        self.modelLabel = Label("Select Model", parent=self.modelFrame)
         self.modelLabel.setStyleSheet(label.update(
-            backgroundColor='transparent', color='#FFFFFF', fontSize=16, fontWeight='600'
+            backgroundColor="transparent", color="#FFFFFF", fontSize=16, fontWeight="600"
         ).qss)
         self.modelLayout.addWidget(self.modelLabel)
 
@@ -125,20 +133,20 @@ class HomeView(View):
             btn.setChecked(is_active)
             if is_active:
                 btn.setStyleSheet(primaryButton.update(
-                    backgroundColor='#E95525',
-                    color='#FFFFFF',
-                    fontWeight='600',
+                    backgroundColor="#E95525",
+                    color="#FFFFFF",
+                    fontWeight="600",
                     radius=10,
-                    hoverColor='#C15532',
+                    hoverColor="#C15532",
                 ).qss)
             else:
                 btn.setStyleSheet(secondaryButton.update(
-                    backgroundColor='#353A42',
-                    color='#CCCCCC',
-                    border='1px solid #454A52',
-                    fontWeight='500',
+                    backgroundColor="#353A42",
+                    color="#CCCCCC",
+                    border="1px solid #454A52",
+                    fontWeight="500",
                     radius=10,
-                    hoverColor='#3A3F47',
+                    hoverColor="#3A3F47",
                 ).qss)
 
             # Disable the MLP button if TensorFlow is not available
@@ -169,16 +177,16 @@ class HomeView(View):
         self.settingsLayout.setSpacing(ui.dp(14))
 
         # Settings section header
-        self.settingsLabel = Label('Audio Settings', parent=self.settingsFrame)
+        self.settingsLabel = Label("Audio Settings", parent=self.settingsFrame)
         self.settingsLabel.setStyleSheet(label.update(
-            backgroundColor='transparent', color='#FFFFFF', fontSize=16, fontWeight='600', border='none'
+            backgroundColor="transparent", color="#FFFFFF", fontSize=16, fontWeight="600", border="none"
         ).qss)
         self.settingsLayout.addWidget(self.settingsLabel)
 
         # Styled input fields with icons
         self.sampleRateInput = InputField(
-            name='Sample Rate',
-            placeholder='Sample Rate',
+            name="Sample Rate",
+            placeholder="Sample Rate",
             parent=self.settingsFrame,
             inType=InputType.NUMBER,
             minVal=0,
@@ -187,8 +195,8 @@ class HomeView(View):
         self.sampleRateInput.setValue(self._sampleRate)
 
         self.frameRateInput = InputField(
-            name='Frame Rate',
-            placeholder='Frame Rate',
+            name="Frame Rate",
+            placeholder="Frame Rate",
             parent=self.settingsFrame,
             inType=InputType.NUMBER,
             minVal=0,
@@ -234,9 +242,9 @@ class HomeView(View):
         self.topSectionLayout.setSpacing(ui.dp(18))
 
         # Selected file field
-        self.selectedFileLabel = Label('No file selected', parent=self.topSectionFrame)
+        self.selectedFileLabel = Label("No file selected", parent=self.topSectionFrame)
         self.selectedFileLabel.setStyleSheet(label.update(
-            backgroundColor='#23272F', color='#CCCCCC', fontSize=14, border='none', radius=8
+            backgroundColor="#23272F", color="#CCCCCC", fontSize=14, border="none", radius=8
         ).qss)
         self.selectedFileLabel.setFixedHeight(ui.dp(40))  # Increase height to accommodate multiple lines
         self.selectedFileLabel.setWordWrap(True)  # Enable text wrapping
@@ -244,11 +252,11 @@ class HomeView(View):
 
         # Select file button with icon
         self.selectFileBtn = Button(
-            'Select Audio File',
+            "Select Audio File",
             icon=Icons.Rounded.folder_open,
             iconSize=ui.size(22, 22),
             styleSheet=secondaryButton.update(
-                backgroundColor='#353A42', color='#E95525', fontWeight='600', radius=8
+                backgroundColor="#353A42", color="#E95525", fontWeight="600", radius=8
             ).qss
         )
         self.selectFileBtn.onClick(self._onSelectFile)
@@ -267,19 +275,19 @@ class HomeView(View):
 
         # Record button with mic icon
         self.recordBtn = Button(
-            'Record',
+            "Record",
             icon=Icons.Rounded.mic,
             iconSize=ui.size(22, 22),
             styleSheet=primaryButton.update(
-                backgroundColor='#E95525', color='white', fontWeight='600', radius=8
+                backgroundColor="#E95525", color="white", fontWeight="600", radius=8
             ).qss
         )
         self.stopBtn = Button(
-            'Stop',
+            "Stop",
             icon=Icons.Rounded.stop_circle,
             iconSize=ui.size(22, 22),
             styleSheet=secondaryButton.update(
-                backgroundColor='#353A42', color='#E95525', fontWeight='600', radius=8
+                backgroundColor="#353A42", color="#E95525", fontWeight="600", radius=8
             ).qss
         )
         self.stopBtn.setEnabled(False)
@@ -292,7 +300,7 @@ class HomeView(View):
         self.recordingGif.hide()
 
         # Blinking/glowing red circle (bulb effect)
-        self.redCircle = Label('', parent=self.topSectionFrame)
+        self.redCircle = Label("", parent=self.topSectionFrame)
         self.redCircle.setFixedSize(ui.dp(18), ui.dp(18))
         self.redCircle.setStyleSheet("""
             QLabel {
@@ -309,9 +317,9 @@ class HomeView(View):
         self._redGlow = True
 
         # Recording status text
-        self.recordingStatus = Label('', parent=self.topSectionFrame)
+        self.recordingStatus = Label("", parent=self.topSectionFrame)
         self.recordingStatus.setStyleSheet(label.update(
-            backgroundColor='transparent', color='#E95525', fontSize=14, fontWeight='600'
+            backgroundColor="transparent", color="#E95525", fontSize=14, fontWeight="600"
         ).qss)
 
         self.recordingLayout.addWidget(self.recordBtn)
@@ -341,31 +349,31 @@ class HomeView(View):
 
         # Play/Pause Button
         self.playPauseBtn = Button(
-            'Play',
-            icon=Icons.Filled.Rounded.play_arrow.update(color='#1e6e0f'),
+            "Play",
+            icon=Icons.Filled.Rounded.play_arrow.update(color="#1e6e0f"),
             iconSize=ui.size(22, 22),
             styleSheet=secondaryButton.update(
-                backgroundColor='#353A42', color='#E95525', fontWeight='600', radius=8
+                backgroundColor="#353A42", color="#E95525", fontWeight="600", radius=8
             ).qss
         )
         self.playPauseBtn.onClick(self._togglePlayPause)
 
         # Stop Button
         self.audioStopBtn = Button(
-            'Stop',
-            icon=Icons.Filled.Rounded.stop.update(color='#E95525'),
+            "Stop",
+            icon=Icons.Filled.Rounded.stop.update(color="#E95525"),
             iconSize=ui.size(22, 22),
             styleSheet=secondaryButton.update(
-                backgroundColor='#353A42', color='#E95525', fontWeight='600', radius=8
+                backgroundColor="#353A42", color="#E95525", fontWeight="600", radius=8
             ).qss
         )
         self.audioStopBtn.onClick(self._stopPlayback)
         self.audioStopBtn.setEnabled(False)  # Disabled initially
 
         # Status label
-        self.playbackStatus = Label('', parent=self.audioControlFrame)
+        self.playbackStatus = Label("", parent=self.audioControlFrame)
         self.playbackStatus.setStyleSheet(label.update(
-            backgroundColor='transparent', color='#CCCCCC', fontSize=14, fontWeight='500'
+            backgroundColor="transparent", color="#CCCCCC", fontSize=14, fontWeight="500"
         ).qss)
 
         # Add spacer to push the analysis button to the right
@@ -373,11 +381,11 @@ class HomeView(View):
 
         # Analyze Button (right-aligned)
         self.analyzeBtn = Button(
-            'Analyze',
+            "Analyze",
             icon=Icons.Rounded.analytics,
             iconSize=ui.size(22, 22),
             styleSheet=primaryButton.update(
-                backgroundColor='#E95525', color='black', fontWeight='600', radius=8
+                backgroundColor="#E95525", color="black", fontWeight="600", radius=8
             ).qss,
             style=Qt.ToolButtonStyle.ToolButtonTextBesideIcon, spaceBetween=2
         )
@@ -409,9 +417,9 @@ class HomeView(View):
         self.waveformLayout.setSpacing(ui.dp(8))
 
         # Waveform title
-        self.waveformTitle = Label('Audio Waveform', parent=self.waveformFrame)
+        self.waveformTitle = Label("Audio Waveform", parent=self.waveformFrame)
         self.waveformTitle.setStyleSheet(label.update(
-            backgroundColor='transparent', color='#FFFFFF', fontSize=14, fontWeight='600'
+            backgroundColor="transparent", color="#FFFFFF", fontSize=14, fontWeight="600"
         ).qss)
 
         # Add waveform widget
@@ -441,9 +449,9 @@ class HomeView(View):
         self.vuLayout.setSpacing(ui.dp(12))
 
         # small title/label
-        self.vuLabel = Label('Volume', parent=self.vuFrame)
+        self.vuLabel = Label("Volume", parent=self.vuFrame)
         self.vuLabel.setStyleSheet(label.update(
-            backgroundColor='transparent', color='#CCCCCC', fontSize=13, fontWeight='600'
+            backgroundColor="transparent", color="#CCCCCC", fontSize=13, fontWeight="600"
         ).qss)
         self.vuLabel.setFixedWidth(ui.dp(80))
 
@@ -472,7 +480,6 @@ class HomeView(View):
                 border-radius: 14px;
                 border: 1px solid #353A42;
             }
-            
             QFrame QLabel {
                 background: transparent;
                 border: none;
@@ -484,9 +491,9 @@ class HomeView(View):
         self.resultsLayout.setContentsMargins(ui.dp(16), ui.dp(12), ui.dp(16), ui.dp(12))
         self.resultsLayout.setSpacing(ui.dp(8))
 
-        self.resultsTitle = Label('Emotion Analysis', parent=self.resultsFrame)
+        self.resultsTitle = Label("Emotion Analysis", parent=self.resultsFrame)
         self.resultsTitle.setStyleSheet(label.update(
-            backgroundColor='transparent', color='#FFFFFF', fontSize=15, fontWeight='600'
+            backgroundColor="transparent", color="#FFFFFF", fontSize=15, fontWeight="600"
         ).qss)
         self.resultsLayout.addWidget(self.resultsTitle)
 
@@ -518,15 +525,15 @@ class HomeView(View):
 
         # recordings directory (AppData\WaveMood\recordings on Windows, fallback to the user home)
         self._recordingsDir = os.path.join(
-            os.getenv('APPDATA') or os.path.expanduser('~'),
-            'WaveMood',
-            'recordings'
+            os.getenv("APPDATA") or os.path.expanduser("~"),
+            "WaveMood",
+            "recordings"
         )
         try:
             os.makedirs(self._recordingsDir, exist_ok=True)
         except OSError as _e:
             # best-effort: if creation fails, fall back to the current working directory
-            self._recordingsDir = os.path.join(os.path.expanduser('~'), 'WaveMood', 'recordings')
+            self._recordingsDir = os.path.join(os.path.expanduser("~"), "WaveMood", "recordings")
             try:
                 os.makedirs(self._recordingsDir, exist_ok=True)
             except OSError:
@@ -562,8 +569,8 @@ class HomeView(View):
 
         # Add COM port input and auto-send checkbox to the config section
         self.comPortInput = InputField(
-            name='COM Port',
-            placeholder='COM Port (e.g. COM6)',
+            name="COM Port",
+            placeholder="COM Port (e.g. COM6)",
             parent=self.config,
             inType=InputType.TEXT,
             icon=Icons.Rounded.usb
@@ -585,11 +592,11 @@ class HomeView(View):
 
         # Add "Send to Arduino" button to a results section
         self.sendArduinoBtn = Button(
-            'Send to Arduino',
+            "Send to Arduino",
             icon=Icons.Rounded.usb,
             iconSize=ui.size(22, 22),
             styleSheet=primaryButton.update(
-                backgroundColor='#E95525', color='white', fontWeight='600', radius=8
+                backgroundColor="#E95525", color="white", fontWeight="600", radius=8
             ).qss
         )
         self.sendArduinoBtn.onClick(self._onSendToArduino)
@@ -615,7 +622,7 @@ class HomeView(View):
                 callback=lambda success: self._onWaveformLoaded(success, filePath)
             )
         else:
-            self.selectedFileLabel.setText('No file selected')
+            self.selectedFileLabel.setText("No file selected")
 
     def _onWaveformLoaded(self, success, file_path):
         """Callback when waveform loading is complete"""
@@ -641,7 +648,7 @@ class HomeView(View):
             pass
         self.recordBtn.setEnabled(False)
         self.stopBtn.setEnabled(True)
-        self.recordingStatus.setText('Recording...')
+        self.recordingStatus.setText("Recording...")
         self.recordingGif.show()
         self.recordingGif.start()
         self._recordingThread = threading.Thread(target=self._recordAudio, daemon=True)
@@ -652,7 +659,7 @@ class HomeView(View):
         self._recording = False
         self.recordBtn.setEnabled(True)
         self.stopBtn.setEnabled(False)
-        self.recordingStatus.setText('Recording stopped')
+        self.recordingStatus.setText("Recording stopped")
         self.recordingGif.stop()
         self.recordingGif.hide()
 
@@ -718,7 +725,7 @@ class HomeView(View):
                 pass
         # run an input stream in this thread. use float32 dtype for predictable behavior.
         try:
-            with sd.InputStream(samplerate=self._sampleRate, channels=1, dtype='float32', callback=callback):
+            with sd.InputStream(samplerate=self._sampleRate, channels=1, dtype="float32", callback=callback):
                 while self._recording:
                     try:
                         data = self._audioQueue.get(timeout=0.1)
@@ -762,14 +769,14 @@ class HomeView(View):
         filename = f"recording_{int(threading.get_native_id())}_{int(time())}.wav"
         filepath = os.path.join(self._recordingsDir, filename)
         try:
-            with wave.open(filepath, 'wb') as wf:
+            with wave.open(filepath, "wb") as wf:
                 wf.setnchannels(1)
                 wf.setsampwidth(2)
                 wf.setframerate(self._sampleRate)
                 wf.writeframes(int16_audio.tobytes())
         except Exception as _e:
             print("Error saving recording:", _e)
-            self.recordingStatus.setText('Error saving recording')
+            self.recordingStatus.setText("Error saving recording")
             return
 
         # update UI
@@ -787,8 +794,8 @@ class HomeView(View):
 
     # --- Audio Playback Methods ---
     def _togglePlayPause(self):
-        if not self.selectedFileLabel.text() or self.selectedFileLabel.text() == 'No file selected':
-            self.playbackStatus.setText('Please select an audio file first')
+        if not self.selectedFileLabel.text() or self.selectedFileLabel.text() == "No file selected":
+            self.playbackStatus.setText("Please select an audio file first")
             return
 
         if self._isPlaying:
@@ -798,16 +805,16 @@ class HomeView(View):
 
     def _startPlayback(self):
         self._isPlaying = True
-        self.playPauseBtn.setText('Pause')
-        self.playPauseBtn.setIcon(Icons.Filled.Rounded.pause.update(color='#0659ad'))
+        self.playPauseBtn.setText("Pause")
+        self.playPauseBtn.setIcon(Icons.Filled.Rounded.pause.update(color="#0659ad"))
         self.audioStopBtn.setEnabled(True)
 
         # Get file path from selectedFileLabel (prefer _currentAudioFile)
         file_path = self._currentAudioFile or self.selectedFileLabel.text()
-        if not file_path or file_path == 'No file selected':
-            self.playbackStatus.setText('Please select an audio file first')
+        if not file_path or file_path == "No file selected":
+            self.playbackStatus.setText("Please select an audio file first")
             self._isPlaying = False
-            self.playPauseBtn.setText('Play')
+            self.playPauseBtn.setText("Play")
             return
 
         # Start playback in a separate thread, resume from the stored frame index
@@ -826,14 +833,14 @@ class HomeView(View):
         except Exception:
             pass
 
-        self.playbackStatus.setText('Playing...')
+        self.playbackStatus.setText("Playing...")
 
     def _pausePlayback(self):
         # set playing flag false so the callback will stop advancing
         self._isPlaying = False
-        self.playPauseBtn.setText('Play')
-        self.playPauseBtn.setIcon(Icons.Filled.Rounded.play_arrow.update(color='#1e6e0f'))
-        self.playbackStatus.setText('Paused')
+        self.playPauseBtn.setText("Play")
+        self.playPauseBtn.setIcon(Icons.Filled.Rounded.play_arrow.update(color="#1e6e0f"))
+        self.playbackStatus.setText("Paused")
 
         # Stop updating the position indicator
         self._playbackUpdateTimer.stop()
@@ -843,7 +850,7 @@ class HomeView(View):
             self._vuTimer.stop()
             with self._vu_lock:
                 self._vu_level = 0.0
-            if hasattr(self, 'vuWidget') and self.vuWidget:
+            if hasattr(self, "vuWidget") and self.vuWidget:
                 self.vuWidget.update_levels([0.0] * self.vuWidget.num_bars)
         except Exception:
             pass
@@ -871,10 +878,10 @@ class HomeView(View):
 
     def _stopPlayback(self):
         self._isPlaying = False
-        self.playPauseBtn.setText('Play')
-        self.playPauseBtn.setIcon(Icons.Filled.Rounded.play_arrow.update(color='#1e6e0f'))
+        self.playPauseBtn.setText("Play")
+        self.playPauseBtn.setIcon(Icons.Filled.Rounded.play_arrow.update(color="#1e6e0f"))
         self.audioStopBtn.setEnabled(False)
-        self.playbackStatus.setText('Stopped')
+        self.playbackStatus.setText("Stopped")
 
         # Reset the playback position and stop updating
         self._playbackPosition = 0
@@ -887,7 +894,7 @@ class HomeView(View):
             self._vuTimer.stop()
             with self._vu_lock:
                 self._vu_level = 0.0
-            if hasattr(self, 'vuWidget') and self.vuWidget:
+            if hasattr(self, "vuWidget") and self.vuWidget:
                 self.vuWidget.update_levels([0.0] * self.vuWidget.num_bars)
         except Exception:
             pass
@@ -977,7 +984,7 @@ class HomeView(View):
             self._playbackStream = sd.OutputStream(
                 samplerate=samplerate,
                 channels=data.shape[1],
-                dtype='float32',
+                dtype="float32",
                 callback=callback
             )
             # start the stream and set the playing flag (in case resumed)
@@ -1008,12 +1015,11 @@ class HomeView(View):
 
             # VU timer will be stopped by main-thread stop/pause handlers
 
-        except Exception as _e:
-            # Ensure UI updated on error
-            QTimer.singleShot(0, lambda: self.playbackStatus.setText(f"Error playing file: {str(_e)}"))
+        except Exception:
+            QTimer.singleShot(0, lambda: self.playbackStatus.setText("Error playing file"))
             self._isPlaying = False
-            QTimer.singleShot(0, lambda: self.playPauseBtn.setText('Play'))
-            QTimer.singleShot(0, lambda: self.playPauseBtn.setIcon(Icons.Filled.Rounded.play_arrow.update(color='#1e6e0f')))
+            QTimer.singleShot(0, lambda: self.playPauseBtn.setText("Play"))
+            QTimer.singleShot(0, lambda: self.playPauseBtn.setIcon(Icons.Filled.Rounded.play_arrow.update(color="#1e6e0f")))
             QTimer.singleShot(0, lambda: self.audioStopBtn.setEnabled(False))
             self._playbackUpdateTimer.stop()
             # ensure VU timer stopped on error
@@ -1023,10 +1029,10 @@ class HomeView(View):
         """Called when playback reaches the end of the file"""
         # Stop playing and ensure stream closed
         self._isPlaying = False
-        self.playPauseBtn.setText('Play')
-        self.playPauseBtn.setIcon(Icons.Filled.Rounded.play_arrow.update(color='#1e6e0f'))
+        self.playPauseBtn.setText("Play")
+        self.playPauseBtn.setIcon(Icons.Filled.Rounded.play_arrow.update(color="#1e6e0f"))
         self.audioStopBtn.setEnabled(False)
-        self.playbackStatus.setText('Playback completed')
+        self.playbackStatus.setText("Playback completed")
         self._playbackUpdateTimer.stop()
 
         # close and clear stream if exists and reset the frame index
@@ -1061,7 +1067,7 @@ class HomeView(View):
             self._vuTimer.stop()
             with self._vu_lock:
                 self._vu_level = 0.0
-            if hasattr(self, 'vuWidget') and self.vuWidget:
+            if hasattr(self, "vuWidget") and self.vuWidget:
                 self.vuWidget.update_levels([0.0] * self.vuWidget.num_bars)
         except Exception:
             pass
@@ -1076,27 +1082,27 @@ class HomeView(View):
     # --- Analysis / model helpers (new) ---
     def _ensure_models_loaded(self):
         """Lazy-load models/scalers/encoders in background thread. Returns (ok, err_msg)."""
-        if getattr(self, '_models_initialized', False):
-            return True, ''
+        if getattr(self, "_models_initialized", False):
+            return True, ""
         try:
             base = os.getcwd()  # expect model files in the project root or adjust as needed
             # load mlp model if available and keras is importable
-            if load_model and _tensorflow_available and not hasattr(self, '_mlp_model'):
-                mlp_path = os.path.join(base, 'emotiondetector_mlp_model.h5')
+            if load_model and _tensorflow_available and not hasattr(self, "_mlp_model"):
+                mlp_path = os.path.join(base, "emotiondetector_mlp_model.h5")
                 if os.path.exists(mlp_path):
                     self._mlp_model = load_model(mlp_path)
             # scalers / encoders
-            scaler_path = os.path.join(base, 'emotion_scaler.pkl')
-            le_path = os.path.join(base, 'emotion_labelencoder.pkl')
-            knn_path = os.path.join(base, 'knn_emotion_model.pkl')
-            if os.path.exists(scaler_path) and not hasattr(self, '_scaler_mlp'):
+            scaler_path = os.path.join(base, "emotion_scaler.pkl")
+            le_path = os.path.join(base, "emotion_labelencoder.pkl")
+            knn_path = os.path.join(base, "knn_emotion_model.pkl")
+            if os.path.exists(scaler_path) and not hasattr(self, "_scaler_mlp"):
                 self._scaler_mlp = joblib.load(scaler_path)
-            if os.path.exists(le_path) and not hasattr(self, '_le_encoder'):
+            if os.path.exists(le_path) and not hasattr(self, "_le_encoder"):
                 self._le_encoder = joblib.load(le_path)
-            if os.path.exists(knn_path) and not hasattr(self, '_knn_model'):
+            if os.path.exists(knn_path) and not hasattr(self, "_knn_model"):
                 self._knn_model = joblib.load(knn_path)
             self._models_initialized = True
-            return True, ''
+            return True, ""
         except Exception as _e:
             return False, str(_e)
 
@@ -1108,7 +1114,7 @@ class HomeView(View):
             x = frame - int(np.mean(frame))
             if x.size < 3:
                 return 0.0
-            corr = np.correlate(x, x, mode='full')
+            corr = np.correlate(x, x, mode="full")
             corr = corr[corr.size // 2:]
             # ignore zero-lag
             corr[0] = 0.0
@@ -1163,17 +1169,17 @@ class HomeView(View):
         except Exception:
             return np.array([], dtype=np.float32), np.array([], dtype=np.float32)
 
-    def _run_analysis(self, file_path, model_choice: str = 'mlp'):
+    def _run_analysis(self, file_path, model_choice: str = "mlp"):
         """
         Worker function: segment the file into overlapping windows, extract features per window,
         predict per-window emotion and probabilities, aggregate results.
         Returns a dict result.
         """
-        result = {'ok': False, 'error': '', 'timeline': [], 'summary': {}}
+        result = {"ok": False, "error": "", "timeline": [], "summary": {}}
         try:
             ok, err = self._ensure_models_loaded()
             if not ok:
-                result['error'] = f"Model load error: {err}"
+                result["error"] = f"Model load error: {err}"
                 return result
 
             # read audio using soundfile
@@ -1212,29 +1218,29 @@ class HomeView(View):
                     ]
                     features = np.array(feed, dtype=np.float32).reshape(1, -1)
                 try:
-                    if model_choice == 'mlp' and hasattr(self, '_mlp_model'):
-                        if hasattr(self, '_scaler_mlp'):
+                    if model_choice == "mlp" and hasattr(self, "_mlp_model"):
+                        if hasattr(self, "_scaler_mlp"):
                             features_scaled = self._scaler_mlp.transform(features)
                         else:
                             features_scaled = features
                         probs = self._mlp_model.predict(features_scaled, verbose=0)
                         probs = probs[0] if probs.ndim > 1 else probs
-                        if hasattr(self, '_le_encoder'):
+                        if hasattr(self, "_le_encoder"):
                             labels = list(self._le_encoder.classes_)
                         else:
                             labels = [str(i) for i in range(probs.shape[0])]
                         pred_idx = int(np.argmax(probs))
                         pred_label = labels[pred_idx]
-                        pred_probs = dict(zip(labels, [float(x) for x in probs]))
-                    elif model_choice == 'knn' and hasattr(self, '_knn_model'):
-                        if hasattr(self._knn_model, 'predict_proba'):
+                        pred_probs = dict(zip(labels, [float(x) for x in probs], strict=False))
+                    elif model_choice == "knn" and hasattr(self, "_knn_model"):
+                        if hasattr(self._knn_model, "predict_proba"):
                             probs = self._knn_model.predict_proba(features)[0]
-                            labels = list(self._le_encoder.classes_) if hasattr(self, '_le_encoder') else [str(i) for i in range(len(probs))]
-                            pred_probs = dict(zip(labels, [float(x) for x in probs]))
+                            labels = list(self._le_encoder.classes_) if hasattr(self, "_le_encoder") else [str(i) for i in range(len(probs))]
+                            pred_probs = dict(zip(labels, [float(x) for x in probs], strict=False))
                             pred_label = labels[int(np.argmax(probs))]
                         else:
                             pred_raw = self._knn_model.predict(features)[0]
-                            if hasattr(self, '_le_encoder'):
+                            if hasattr(self, "_le_encoder"):
                                 pred_label = self._le_encoder.inverse_transform([pred_raw])[0]
                             else:
                                 pred_label = str(pred_raw)
@@ -1243,45 +1249,45 @@ class HomeView(View):
                         # fallback: use energy-based heuristic
                         avg_rms = float(np.mean(energies)) if energies.size else 0.0
                         if avg_rms < 0.02:
-                            pred_label = 'neutral'
+                            pred_label = "neutral"
                         elif avg_rms < 0.08:
-                            pred_label = 'calm'
+                            pred_label = "calm"
                         else:
-                            pred_label = 'excited'
+                            pred_label = "excited"
                         pred_probs = {pred_label: 1.0}
                 except Exception:
-                    pred_label = 'error'
-                    pred_probs = {'error': 1.0}
+                    pred_label = "error"
+                    pred_probs = {"error": 1.0}
                 # record
                 t_start = idx / float(sr)
                 t_end = min(total_sec, (idx + win) / float(sr))
                 window_predictions.append(pred_label)
                 probs_list.append(pred_probs)
-                windows_info.append({'start': t_start, 'end': t_end, 'label': pred_label, 'probs': pred_probs})
+                windows_info.append({"start": t_start, "end": t_end, "label": pred_label, "probs": pred_probs})
                 idx += hop
 
             # aggregate durations
             duration_map = {}
             prob_accum = {}
             for w in windows_info:
-                lbl = w['label']
-                dur = max(0.0, w['end'] - w['start'])
+                lbl = w["label"]
+                dur = max(0.0, w["end"] - w["start"])
                 duration_map[lbl] = duration_map.get(lbl, 0.0) + dur
-                if w.get('probs'):
-                    for k, v in (w['probs'] or {}).items():
+                if w.get("probs"):
+                    for k, v in (w["probs"] or {}).items():
                         prob_accum.setdefault(k, []).append(float(v))
             # compute percentages
             summary = {}
             for lbl, dur in duration_map.items():
                 pct = (dur / total_sec) * 100.0 if total_sec > 1e-6 else 0.0
                 avg_prob = float(np.mean(prob_accum.get(lbl, [1.0]))) if prob_accum.get(lbl) else None
-                summary[lbl] = {'duration_s': round(dur, 3), 'pct': round(pct, 2), 'avg_prob': (round(avg_prob, 4) if avg_prob is not None else None)}
-            result['ok'] = True
-            result['timeline'] = windows_info
-            result['summary'] = summary
+                summary[lbl] = {"duration_s": round(dur, 3), "pct": round(pct, 2), "avg_prob": (round(avg_prob, 4) if avg_prob is not None else None)}
+            result["ok"] = True
+            result["timeline"] = windows_info
+            result["summary"] = summary
             return result
         except Exception as _e:
-            result['error'] = str(_e)
+            result["error"] = str(_e)
             return result
 
     def _init_emotion_rows(self):
@@ -1293,7 +1299,7 @@ class HomeView(View):
             row.setSpacing(ui.dp(10))
             row.setContentsMargins(ui.dp(6), ui.dp(2), ui.dp(6), ui.dp(2))
 
-            emoji_label = Label(text=info['emoji'], parent=self.emotionRowsWidget)
+            emoji_label = Label(text=info["emoji"], parent=self.emotionRowsWidget)
             emoji_label.setFixedWidth(ui.dp(50))
             emoji_label.setFixedHeight(ui.dp(36))
             emoji_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -1310,7 +1316,7 @@ class HomeView(View):
                 }}
             """)
 
-            text_label = Label(text=info['label'], parent=self.emotionRowsWidget)
+            text_label = Label(text=info["label"], parent=self.emotionRowsWidget)
             text_label.setFixedWidth(ui.dp(80))
             text_label.setStyleSheet("""
                 QLabel {
@@ -1323,7 +1329,7 @@ class HomeView(View):
                 }
             """)
 
-            duration_label = Label(text='🕒 0.00s', parent=self.emotionRowsWidget)
+            duration_label = Label(text="🕒 0.00s", parent=self.emotionRowsWidget)
             duration_label.setFixedWidth(ui.dp(80))
             duration_label.setStyleSheet("""
                 QLabel {
@@ -1356,7 +1362,7 @@ class HomeView(View):
                 }}
             """)
 
-            percent_label = Label(text='0.0%', parent=self.emotionRowsWidget)
+            percent_label = Label(text="0.0%", parent=self.emotionRowsWidget)
             percent_label.setFixedWidth(ui.dp(80))
             percent_label.setStyleSheet("""
                 QLabel {
@@ -1386,22 +1392,22 @@ class HomeView(View):
                 }
             """)
             self.emotionRowsWidget.addWidget(container)
-            self._emotion_widgets[info['key']] = {
-                'duration': duration_label,
-                'percent': percent_label,
-                'prob': prob_bar
+            self._emotion_widgets[info["key"]] = {
+                "duration": duration_label,
+                "percent": percent_label,
+                "prob": prob_bar
             }
 
     def _update_emotion_rows(self, summary):
         """Update emotion rows after analysis."""
         for info in self._emotion_list:
-            key = info['key']
+            key = info["key"]
             w = self._emotion_widgets.get(key)
             if not w:
                 continue
             data = summary.get(key, {})
-            duration = data.get('duration_s', 0.0)
-            percent = data.get('pct', 0.0)
+            duration = data.get("duration_s", 0.0)
+            percent = data.get("pct", 0.0)
             # Format duration prettily
             if duration >= 60:
                 mins = int(duration // 60)
@@ -1409,11 +1415,11 @@ class HomeView(View):
                 duration_str = f"🕒 {mins}m {secs:.2f}s"
             else:
                 duration_str = f"🕒 {duration:.2f}s"
-            w['duration'].setText(duration_str)
-            w['percent'].setText(f"{percent:.2f}%")
+            w["duration"].setText(duration_str)
+            w["percent"].setText(f"{percent:.2f}%")
             # Progress bar value is pct, clamped to 100
             pct_val = max(0, min(100, int(percent) if percent is not None else 0.0))
-            w['prob'].setValue(int(pct_val))
+            w["prob"].setValue(int(pct_val))
 
     # --- Arduino Serial Logic ---
     def _ensure_arduino_connected(self):
@@ -1473,16 +1479,16 @@ class HomeView(View):
     def _onAnalysisComplete(self, res, file_path):
         """Callback on the main thread after analysis completes."""
         try:
-            if not isinstance(res, dict) or not res.get('ok'):
-                err = res.get('error') if isinstance(res, dict) else str(res)
+            if not isinstance(res, dict) or not res.get("ok"):
+                err = res.get("error") if isinstance(res, dict) else str(res)
                 self.playbackStatus.setText(f"Analysis failed: {err}")
                 logger.error(f"Audio analysis failed: {err}")
                 self._init_emotion_rows()
                 return
-            summary = res.get('summary', {})
+            summary = res.get("summary", {})
             # pick top emotion by duration
             if summary:
-                top = max(summary.items(), key=lambda kv: kv[1]['duration_s'])
+                top = max(summary.items(), key=lambda kv: kv[1]["duration_s"])
                 top_label, top_info = top
                 self.playbackStatus.setText(f"Top emotion: {top_label} ({top_info['pct']}%)")
                 self._last_predicted_emotion = top_label
@@ -1492,7 +1498,7 @@ class HomeView(View):
                 logger.info(f"Analysis summary for {file_path}:")
                 for lbl, info in summary.items():
                     logger.info(
-                        "  %s — %.2fs (%.2f%%) avg_prob=%s" % (lbl, info['duration_s'], info['pct'], info['avg_prob'])
+                        "  %s — %.2fs (%.2f%%) avg_prob=%s" % (lbl, info["duration_s"], info["pct"], info["avg_prob"])
                     )
             else:
                 self.playbackStatus.setText("No emotions detected")
@@ -1509,21 +1515,21 @@ class HomeView(View):
     def _analyzeAudio(self):
         """Start background analysis for the current audio file."""
         file_path = self.selectedFileLabel.text()
-        if not file_path or file_path == 'No file selected' or not os.path.exists(file_path):
-            self.playbackStatus.setText('Please select or record an audio file first')
+        if not file_path or file_path == "No file selected" or not os.path.exists(file_path):
+            self.playbackStatus.setText("Please select or record an audio file first")
             self._init_emotion_rows()
             return
         # ask which model is active
-        if getattr(self, '_activeModel', None) == Model.MLP:
+        if getattr(self, "_activeModel", None) == Model.MLP:
             if not _tensorflow_available:
-                self.playbackStatus.setText('MLP model unavailable: TensorFlow not loaded')
+                self.playbackStatus.setText("MLP model unavailable: TensorFlow not loaded")
                 logger.error("MLP model unavailable: TensorFlow DLL load failed")
                 self._init_emotion_rows()
                 return
-            model_choice = 'mlp'
+            model_choice = "mlp"
         else:
-            model_choice = 'knn'
-        self.playbackStatus.setText('Analyzing audio...')
+            model_choice = "knn"
+        self.playbackStatus.setText("Analyzing audio...")
         self._init_emotion_rows()
         # run analysis in the background and call back on completion
         threadPool.start(
@@ -1539,9 +1545,9 @@ class HomeView(View):
     def _updatePlaybackPosition(self):
         """Called periodically by timer to move the waveform playback cursor."""
         try:
-            pos = getattr(self, '_playbackPosition', 0.0)
+            pos = getattr(self, "_playbackPosition", 0.0)
             # only update if the waveform widget exists
-            if hasattr(self, 'waveformWidget') and self.waveformWidget is not None:
+            if hasattr(self, "waveformWidget") and self.waveformWidget is not None:
                 # ensure numeric value
                 try:
                     pos_val = float(pos)
@@ -1557,11 +1563,11 @@ class HomeView(View):
         """Timer-driven UI update for VU meter (main thread)."""
         try:
             with self._vu_lock:
-                level = float(getattr(self, '_vu_level', 0.0))
+                level = float(getattr(self, "_vu_level", 0.0))
             # produce two lively bars with a small independent jitter
             rng = np.random.RandomState(int(time() * 1000) & 0xFFFF)
             bars = []
-            for i in range(self.vuWidget.num_bars):
+            for _ in range(self.vuWidget.num_bars):
                 jitter = 0.2 * rng.rand()  # small variation per bar
                 factor = 0.7 + jitter      # baseline visible range
                 bars.append(max(0.0, min(1.0, level * factor)))
@@ -1581,21 +1587,21 @@ class HomeView(View):
                 if m == model:
                     b.setChecked(True)
                     b.setStyleSheet(primaryButton.update(
-                        backgroundColor='#E95525',
-                        color='#FFFFFF',
-                        fontWeight='600',
+                        backgroundColor="#E95525",
+                        color="#FFFFFF",
+                        fontWeight="600",
                         radius=10,
-                        hoverColor='#C15532',
+                        hoverColor="#C15532",
                     ).qss)
                 else:
                     b.setChecked(False)
                     b.setStyleSheet(secondaryButton.update(
-                        backgroundColor='#353A42',
-                        color='#CCCCCC',
-                        border='1px solid #454A52',
-                        fontWeight='500',
+                        backgroundColor="#353A42",
+                        color="#CCCCCC",
+                        border="1px solid #454A52",
+                        fontWeight="500",
                         radius=10,
-                        hoverColor='#3A3F47',
+                        hoverColor="#3A3F47",
                     ).qss)
         except Exception as _e:
             logger.error(f"Error in _onModelSelected: {_e}")
