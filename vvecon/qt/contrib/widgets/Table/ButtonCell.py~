@@ -1,0 +1,44 @@
+from typing import Dict, List, Optional
+
+from PyQt6.QtCore import QPoint, QSize, Qt
+from PyQt6.QtWidgets import QMenu, QLabel, QPushButton
+from PyQt6.QtGui import QAction, QIcon, QPixmap
+
+from Components.Common import Padding
+from Components.QButton import Button
+from lib import Images
+from Util.Style.Button import lightButton, noButton, transparentButton
+from Util.Style.Menu import menu
+from vvecon.qt.logger import logger
+from vvecon.qt.util import ui
+
+from .BaseCell import BaseCell
+
+__all__ = ['ButtonCell']
+
+
+class ButtonCell(BaseCell):
+	"""
+	ActionCell(actions: Optional[List[Dict[str, Any]] = None)
+	"""
+	_actions: List[dict] = []
+
+	def __init__(self, *args, **kwargs):
+		self._actions = kwargs.get('actions', [])
+		super(ButtonCell, self).__init__(*args, **kwargs)
+
+		self.layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+		# self.layout.setSpacing(10)
+
+	def setupCell(self):
+		for action in self._actions:
+			btn = QPushButton()
+			btn.setStyleSheet('background-color: transparent; border: none;')
+			btn.setIcon(QIcon(action['icon']))
+			btn.setFixedSize(30, 30)
+			if action.get('action'):
+				btn.clicked.connect(lambda: action['action'](self._parent.data))
+			self.layout.addWidget(btn)
+
+	def setValues(self, data: Optional[dict] = None):
+		pass

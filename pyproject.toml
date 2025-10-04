@@ -1,0 +1,44 @@
+[project]
+name = "wavemood"
+version = "0.1.0"
+description = "A desktop application for music mood classification using TensorFlow and PyQt6."
+readme = "README.md"
+license = {text = "MIT"}
+authors = [{name = "Sasindu Wijethunga", email = "sasindusulochana99@gmail.com"}]
+classifiers = [
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Multimedia :: Sound/Audio :: Analysis",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: User Interfaces",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "cryptography>=45.0.6",
+    "dotenv>=0.9.9",
+    "gradio>=5.46.0",
+    "icecream>=2.1.7",
+    "librosa>=0.11.0",
+    "matplotlib>=3.10.6",
+    "nuitka>=2.7.16",
+    "numpy>=1.26.0",
+    "pandas>=2.3.2",
+    "pip>=25.2",
+    "pyqt6>=6.9.1",
+    "pyqtgraph>=0.13.7",
+    "pytz>=2025.2",
+    "requests>=2.32.4",
+    "seaborn>=0.13.2",
+    "sounddevice>=0.5.2",
+    "sqlalchemy>=2.0.43",
+    "tensorflow>=2.20.0",
+    "typing-extensions>=4.12.0",
+    "keras>=3.10.0",
+    "protobuf>=5.28.0",
+    "tensorflow-cpu>=2.20.0",
+    "serial>=0.0.97",
+]
